@@ -28945,7 +28945,7 @@ var Roadkill;
                     request.fail(function (jqXHR, textStatus, errorThrown) {
                         // Logged out since the call was made
                         if (errorThrown.message.indexOf("unexpected character") !== -1) {
-                            window.location = window.location;
+                            window.location.href = window.location.href;
                         }
                         else {
                             toastr.error(errorMessage + errorThrown);
@@ -29480,7 +29480,7 @@ var Roadkill;
                     request.fail(function (jqXHR, textStatus, errorThrown) {
                         // Logged out since the call was made
                         if (errorThrown.message.indexOf("unexpected character") !== -1) {
-                            window.location = window.location;
+                            window.location.href = window.location.href;
                         }
                         else {
                             toastr.error(errorMessage + errorThrown);
