@@ -76,9 +76,9 @@ namespace Roadkill.Core.DependencyResolution.StructureMap.Registries
 			});
         }
 
-		public static Func<HtmlLinkTag, HtmlLinkTag> OnLinkParsed(IContext ctx)
+		private Func<HtmlLinkTag, HtmlLinkTag> OnLinkParsed(IContext ctx)
 		{
-			// Use LinkTagProvider for link parsing callback
+			// Link parsing callback
 			return (htmlImageTag) =>
 			{
 				var pageRepository = ctx.GetInstance<IPageRepository>();
@@ -92,9 +92,9 @@ namespace Roadkill.Core.DependencyResolution.StructureMap.Registries
 			};
 		}
 
-		public static Func<HtmlImageTag, HtmlImageTag> OnImageParsed(IContext ctx)
+		private Func<HtmlImageTag, HtmlImageTag> OnImageParsed(IContext ctx)
 		{
-			// Use ImageTagProvider for image parsing callback
+			// Image parsing callback
 			return (htmlImageTag) =>
 			{
 				var appSettings = ctx.GetInstance<ApplicationSettings>();

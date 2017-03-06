@@ -1,9 +1,15 @@
-﻿using System.Web;
+﻿using System;
+using System.Web;
+using System.Web.Routing;
 using NUnit.Framework;
+using Roadkill.Core.Configuration;
 using Roadkill.Core.Database;
+using Roadkill.Core.DependencyResolution.StructureMap.Registries;
+using Roadkill.Core.Mvc.Setup;
 using Roadkill.Core.Plugins;
 using Roadkill.Core.Text.CustomTokens;
 using Roadkill.Core.Text.Parsers;
+using Roadkill.Core.Text.Parsers.Links;
 using Roadkill.Core.Text.Parsers.Markdig;
 using Roadkill.Core.Text.Sanitizer;
 using Roadkill.Core.Text.TextMiddleware;
@@ -17,7 +23,9 @@ namespace Roadkill.Tests.Unit.DependencyResolution
 	[Category("Unit")]
 	public class TextRegistryTests : RegistryTestsBase
     {
-		[SetUp]
+	    private RepositoryFactoryMock _repositoryFactory;
+
+	    [SetUp]
 		public void Setup()
 		{
 			// Inject a fake HttpContext for UrlHelper, used by UrlResolver
@@ -27,11 +35,19 @@ namespace Roadkill.Tests.Unit.DependencyResolution
 			// Inject a fake SettingsRepository for TextPlugins
 			Container.Configure(x =>
 			{
-				var repositoryFactory = new RepositoryFactoryMock();
-				repositoryFactory.SettingsRepository = new SettingsRepositoryMock();
+				_repositoryFactory = new RepositoryFactoryMock();
+				_repositoryFactory.SettingsRepository = new SettingsRepositoryMock();
 
-				x.For<IRepositoryFactory>().Use(repositoryFactory);
+				x.For<IRepositoryFactory>().Use(_repositoryFactory);
 			});
+		}
+
+		private void AddPage(string title)
+		{
+			// Required by UrlHelper
+			Routing.Register(RouteTable.Routes);
+
+			_repositoryFactory.PageRepository.AddNewPage(new Page() { Id = 1, Title = title }, "some text", "user", DateTime.Today);
 		}
 
 		[Test]
@@ -79,29 +95,52 @@ namespace Roadkill.Tests.Unit.DependencyResolution
         }
 
 		[Test]
-		public void should_use_linktagprovider()
+		public void should_wire_markdigparser()
 		{
 			// Arrange
+			IContainer container = Container;
 
 			// Act
+			var markupParser = container.GetInstance<IMarkupParser>();
 
 			// Assert
-			Assert.Fail("TODO");
+			Assert.That(markupParser, Is.Not.Null);
+			Assert.That(markupParser, Is.TypeOf<MarkdigParser>());
+		}
+
+		[Test]
+		public void should_wire_markdigparser_events()
+		{
+			// Arrange
+			IContainer container = Container;
+
+			// Act
+			var markupParser = container.GetInstance<IMarkupParser>();
+
+			// Assert
+			Assert.That(markupParser, Is.Not.Null);
+			Assert.That(markupParser.LinkParsed, Is.Not.Null);
+			Assert.That(markupParser.ImageParsed, Is.Not.Null);
+		}
+
+		[Test]
+		public void markdigparser_linkparsed_should_do_things()
+		{
+			// Arrange
+			AddPage("My page with spaces in");
+			IContainer container = Container;
+			var markupParser = container.GetInstance<IMarkupParser>();
+			var htmlLinkTag = new HtmlLinkTag("My page with spaces in", "My page with spaces in", "My link text", "_new");
+
+			// Act
+			htmlLinkTag = markupParser.LinkParsed(htmlLinkTag);
+
+			// Assert
+			Assert.That(htmlLinkTag.Href, Is.EqualTo("/wiki/1/my-page-with-spaces-in"));
 		}
 
 		[Test]
 		public void should_use_imagetagprovider()
-		{
-			// Arrange
-
-			// Act
-
-			// Assert
-			Assert.Fail("TODO");
-		}
-
-		[Test]
-		public void should1()
 		{
 			// Arrange
 
