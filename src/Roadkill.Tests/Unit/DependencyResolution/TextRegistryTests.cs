@@ -9,6 +9,7 @@ using Roadkill.Core.Mvc.Setup;
 using Roadkill.Core.Plugins;
 using Roadkill.Core.Text.CustomTokens;
 using Roadkill.Core.Text.Parsers;
+using Roadkill.Core.Text.Parsers.Images;
 using Roadkill.Core.Text.Parsers.Links;
 using Roadkill.Core.Text.Parsers.Markdig;
 using Roadkill.Core.Text.Sanitizer;
@@ -51,7 +52,17 @@ namespace Roadkill.Tests.Unit.DependencyResolution
 		}
 
 		[Test]
-		public void should_construct_builder_and_parse_basic_markup()
+		public void should_register_types_with_instances()
+		{
+			// Arrange + Act + Assert
+			AssertDefaultType<IPluginFactory, PluginFactory>();
+			AssertDefaultType<IMarkupParser, MarkdigParser>();
+			AssertDefaultType<IHtmlSanitizerFactory, HtmlSanitizerFactory>();
+			AssertDefaultType<CustomTokenParser, CustomTokenParser>();
+		}
+
+		[Test]
+		public void should_construct_TextMiddlewareBuilder_and_parse_basic_markup()
 		{
 			// Arrange
 			IContainer container = Container;
@@ -66,36 +77,64 @@ namespace Roadkill.Tests.Unit.DependencyResolution
             Assert.That(html, Is.EqualTo("<p><strong>markdown</strong></p>\n")); // a basic smoke test of the middleware chain
         }
 
-        [Test]
-		public void should_register_types_with_instances()
+		[Test]
+		public void should_register_TextMiddlewareBuilder_in_the_correct_order()
 		{
-			// Arrange + Act + Assert
-			AssertDefaultType<IPluginFactory, PluginFactory>();
-            AssertDefaultType<IMarkupParser, MarkdigParser>();
-            AssertDefaultType<IHtmlSanitizerFactory, HtmlSanitizerFactory>();
-            AssertDefaultType<CustomTokenParser, CustomTokenParser>();
-        }
+			// Arrange
+			IContainer container = Container;
 
-        [Test]
-        public void should_register_middleware_in_the_correct_order()
-        {
-            // Arrange
-            IContainer container = Container;
+			// Act
+			var builder = container.GetInstance<TextMiddlewareBuilder>();
 
-            // Act
-            var builder = container.GetInstance<TextMiddlewareBuilder>();
-
-            // Assert
-            Assert.That(builder, Is.Not.Null);
-            Assert.That(builder.MiddlewareItems[0], Is.TypeOf<TextPluginBeforeParseMiddleware>());
-            Assert.That(builder.MiddlewareItems[1], Is.TypeOf<MarkupParserMiddleware>());
-            Assert.That(builder.MiddlewareItems[2], Is.TypeOf<HarmfulTagMiddleware>());
-            Assert.That(builder.MiddlewareItems[3], Is.TypeOf<CustomTokenMiddleware>());
-            Assert.That(builder.MiddlewareItems[4], Is.TypeOf<TextPluginAfterParseMiddleware>());
-        }
+			// Assert
+			Assert.That(builder, Is.Not.Null);
+			Assert.That(builder.MiddlewareItems[0], Is.TypeOf<TextPluginBeforeParseMiddleware>());
+			Assert.That(builder.MiddlewareItems[1], Is.TypeOf<MarkupParserMiddleware>());
+			Assert.That(builder.MiddlewareItems[2], Is.TypeOf<HarmfulTagMiddleware>());
+			Assert.That(builder.MiddlewareItems[3], Is.TypeOf<CustomTokenMiddleware>());
+			Assert.That(builder.MiddlewareItems[4], Is.TypeOf<TextPluginAfterParseMiddleware>());
+		}
 
 		[Test]
-		public void should_wire_markdigparser()
+		[TestCase("http://i223.photobucket.com/albums/dd45/wally2603/91e7840f.jpg")]
+		[TestCase("https://i223.photobucket.com/albums/dd45/wally2603/91e7840f.jpg")]
+		public void TextMiddlewareBuilder_should_Not_Rewrite_Images_As_Internal_That_Start_With_Known_Prefixes(string imageUrl)
+		{
+			// Arrange
+			IContainer container = Container;
+
+			// Act
+			var builder = container.GetInstance<TextMiddlewareBuilder>();
+
+			// Assert
+			Assert.That(builder, Is.Not.Null);
+
+			string html = builder.Execute("![Image title](" + imageUrl + ")");
+			// assert image was called/html
+			Assert.That(html, Is.EqualTo("<p><img src=\""+ imageUrl+"\" class=\"img-responsive\"></p>\n"));
+		}
+
+		[Test]
+		public void TextMiddlewareBuilder_should_remove_script_link_iframe_frameset_frame_applet_tags_from_text()
+		{
+			// Arrange
+			string markdown = " some text <script type=\"text/html\">while(true)alert('lolz');</script>" +
+				"<iframe src=\"google.com\"></iframe><frame>blah</frame> <applet code=\"MyApplet.class\" width=100 height=140></applet>" +
+				"<frameset src='new.html'></frameset>";
+			string expectedHtml = "<p>some text blah </p>\n";
+
+			IContainer container = Container;
+			var builder = container.GetInstance<TextMiddlewareBuilder>();
+
+			// Act
+			string actualHtml = builder.Execute(markdown);
+
+			// Assert
+			Assert.That(actualHtml, Is.EqualTo(expectedHtml));
+		}
+
+		[Test]
+		public void should_use_markdigparser_as_imarkupparser()
 		{
 			// Arrange
 			IContainer container = Container;
@@ -124,7 +163,7 @@ namespace Roadkill.Tests.Unit.DependencyResolution
 		}
 
 		[Test]
-		public void markdigparser_linkparsed_should_do_things()
+		public void should_configure_IMarkupParser_linkparsed_event()
 		{
 			// Arrange
 			AddPage("My page with spaces in");
@@ -140,63 +179,21 @@ namespace Roadkill.Tests.Unit.DependencyResolution
 		}
 
 		[Test]
-		public void should_use_imagetagprovider()
+		public void should_configure_IMarkupParser_imageparsed_event()
 		{
 			// Arrange
-
-			// Act
-
-			// Assert
-			Assert.Fail("TODO");
-		}
-
-		[Test]
-		public void should2()
-		{
-			// Arrange
-
-			// Act
-
-			// Assert
-			Assert.Fail("TODO");
-		}
-
-		[Test]
-		[TestCase("http://i223.photobucket.com/albums/dd45/wally2603/91e7840f.jpg")]
-		[TestCase("https://i223.photobucket.com/albums/dd45/wally2603/91e7840f.jpg")]
-		public void x1_should_Not_Rewrite_Images_As_Internal_That_Start_With_Known_Prefixes(string imageUrl)
-		{
-			// Arrange
-			IContainer container = Container;
-
-			// Act
-			var builder = container.GetInstance<TextMiddlewareBuilder>();
-
-			// Assert
-			Assert.That(builder, Is.Not.Null);
-
-			string html = builder.Execute("![Image title](" + imageUrl + ")");
-			// assert image was called/html
-			Assert.That(html, Is.EqualTo("<p><strong>markdown</strong></p>\n"));
-		}
-
-		[Test]
-		public void x1_should_remove_script_link_iframe_frameset_frame_applet_tags_from_text()
-		{
-			// Arrange
-			string markdown = " some text <script type=\"text/html\">while(true)alert('lolz');</script>" +
-				"<iframe src=\"google.com\"></iframe><frame>blah</frame> <applet code=\"MyApplet.class\" width=100 height=140></applet>" +
-				"<frameset src='new.html'></frameset>";
-			string expectedHtml = "<p>some text blah </p>\n";
+			ConfigReaderWriterStub.ApplicationSettings.AttachmentsRoutePath = "MyAttachments";
 
 			IContainer container = Container;
-			var builder = container.GetInstance<TextMiddlewareBuilder>();
+			var markupParser = container.GetInstance<IMarkupParser>();
+			var htmlImageTag = new HtmlImageTag("/my.gif", "/my.gif", "alt", "title", HtmlImageTag.HorizontalAlignment.Right);
 
 			// Act
-			string actualHtml = builder.Execute(markdown);
+			htmlImageTag = markupParser.ImageParsed(htmlImageTag);
 
 			// Assert
-			Assert.That(actualHtml, Is.EqualTo(expectedHtml));
+			Assert.That(htmlImageTag.OriginalSrc, Is.EqualTo("/my.gif"));
+			Assert.That(htmlImageTag.Src, Is.EqualTo("/MyAttachments/my.gif"));
 		}
 	}
 }
