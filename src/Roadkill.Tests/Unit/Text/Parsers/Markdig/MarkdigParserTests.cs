@@ -14,7 +14,7 @@ namespace Roadkill.Tests.Unit.Text.Parsers.Markdig
 			// given
 			string expectedHtml = "<p><a href=\"http://www.google.com\" rel=\"nofollow\">googz</a>"+
 									"<img src=\"/myimage.jpg\" class=\"img-responsive\" border=\"0\" alt=\"img\" title=\"img\" /></p>\n";
-			var parser = new MarkdigParser();
+			var parser = new MarkdigConverter();
 
 			// when
 			string actualHtml = parser.ToHtml("[googz](http://www.google.com)![img](/myimage.jpg)");
@@ -46,7 +46,7 @@ namespace Roadkill.Tests.Unit.Text.Parsers.Markdig
 
 			string expectedHtml = "<p><a href=\"/new%20href\" class=\"new css\">new text</a>" +
 									"<img src=\"/new%20src\" class=\"img-responsive\" border=\"0\" alt=\"new alt\" title=\"new title\" /></p>\n";
-			var parser = new MarkdigParser();
+			var parser = new MarkdigConverter();
 			parser.ImageParsed = imageParsed;
 			parser.LinkParsed = linkParsed;
 
@@ -63,7 +63,7 @@ namespace Roadkill.Tests.Unit.Text.Parsers.Markdig
 			// Arrange
 			string expectedHtml = "<p><a href=\"?a=%23myvalue#myanchortag\">hello world</a></p>\n";
 			string markdown = "[hello world](?a=%23myvalue#myanchortag)";
-			var parser = new MarkdigParser();
+			var parser = new MarkdigConverter();
 
 			// when
 			string html = parser.ToHtml(markdown);
@@ -76,7 +76,7 @@ namespace Roadkill.Tests.Unit.Text.Parsers.Markdig
         public void should_handle_empty_strings()
         {
 			// given
-			var parser = new MarkdigParser();
+			var parser = new MarkdigConverter();
 
 			// when
 			string html = parser.ToHtml(null);
@@ -91,7 +91,7 @@ namespace Roadkill.Tests.Unit.Text.Parsers.Markdig
             // given
             string expectedHtml = "<p><a href=\"http://www.google.com\" class=\"main\" rel=\"nofollow\">i am a link</a></p>\n";
             string markdown = "[i am a link](http://www.google.com){.main}";
-            var parser = new MarkdigParser();
+            var parser = new MarkdigConverter();
 
             // when
             string html = parser.ToHtml(markdown);
@@ -99,5 +99,23 @@ namespace Roadkill.Tests.Unit.Text.Parsers.Markdig
             // then
             Assert.That(html, Is.EqualTo(expectedHtml));
         }
-    }
+
+	    [Test]
+	    public void should_call_image_parsed_func()
+	    {
+		    Assert.Fail("Fail");
+	    }
+
+		[Test]
+		public void should_call_link_parsed_func()
+		{
+			Assert.Fail("Fail");
+		}
+
+		[Test]
+		public void should_handle_advanced_markdown()
+		{
+			Assert.Fail("Fail");
+		}
+	}
 }

@@ -27,7 +27,7 @@ namespace Roadkill.Core.Mvc.WebViewPages
 		public TextMiddlewareBuilder TextMiddlewareBuilder { get; set; }
 
         [SetterProperty]
-        public IMarkupParser MarkupParser { get; set; }
+        public IMarkupConverter MarkupConverter { get; set; }
 
         [SetterProperty]
 		public SettingsService SettingsService { get; set; }

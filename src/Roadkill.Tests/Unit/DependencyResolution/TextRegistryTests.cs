@@ -56,7 +56,7 @@ namespace Roadkill.Tests.Unit.DependencyResolution
 		{
 			// Arrange + Act + Assert
 			AssertDefaultType<IPluginFactory, PluginFactory>();
-			AssertDefaultType<IMarkupParser, MarkdigParser>();
+			AssertDefaultType<IMarkupConverter, MarkdigConverter>();
 			AssertDefaultType<IHtmlSanitizerFactory, HtmlSanitizerFactory>();
 			AssertDefaultType<CustomTokenParser, CustomTokenParser>();
 		}
@@ -140,11 +140,11 @@ namespace Roadkill.Tests.Unit.DependencyResolution
 			IContainer container = Container;
 
 			// Act
-			var markupParser = container.GetInstance<IMarkupParser>();
+			var markupParser = container.GetInstance<IMarkupConverter>();
 
 			// Assert
 			Assert.That(markupParser, Is.Not.Null);
-			Assert.That(markupParser, Is.TypeOf<MarkdigParser>());
+			Assert.That(markupParser, Is.TypeOf<MarkdigConverter>());
 		}
 
 		[Test]
@@ -154,7 +154,7 @@ namespace Roadkill.Tests.Unit.DependencyResolution
 			IContainer container = Container;
 
 			// Act
-			var markupParser = container.GetInstance<IMarkupParser>();
+			var markupParser = container.GetInstance<IMarkupConverter>();
 
 			// Assert
 			Assert.That(markupParser, Is.Not.Null);
@@ -168,7 +168,7 @@ namespace Roadkill.Tests.Unit.DependencyResolution
 			// Arrange
 			AddPage("My page with spaces in");
 			IContainer container = Container;
-			var markupParser = container.GetInstance<IMarkupParser>();
+			var markupParser = container.GetInstance<IMarkupConverter>();
 			var htmlLinkTag = new HtmlLinkTag("My page with spaces in", "My page with spaces in", "My link text", "_new");
 
 			// Act
@@ -185,7 +185,7 @@ namespace Roadkill.Tests.Unit.DependencyResolution
 			ConfigReaderWriterStub.ApplicationSettings.AttachmentsRoutePath = "MyAttachments";
 
 			IContainer container = Container;
-			var markupParser = container.GetInstance<IMarkupParser>();
+			var markupParser = container.GetInstance<IMarkupConverter>();
 			var htmlImageTag = new HtmlImageTag("/my.gif", "/my.gif", "alt", "title", HtmlImageTag.HorizontalAlignment.Right);
 
 			// Act

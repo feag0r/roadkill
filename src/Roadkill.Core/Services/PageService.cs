@@ -32,7 +32,7 @@ namespace Roadkill.Core.Services
 		private readonly PageViewModelCache _pageViewModelCache;
 		private readonly SiteCache _siteCache;
 	    private readonly TextMiddlewareBuilder _textMiddlewareBuilder;
-	    private readonly IMarkupParser _markupParser;
+	    private readonly IMarkupConverter _markupConverter;
 	    private readonly IPluginFactory _pluginFactory;
 		private readonly MarkupLinkUpdater _markupLinkUpdater;
 
@@ -43,7 +43,7 @@ namespace Roadkill.Core.Services
 		public PageService(ApplicationSettings settings, ISettingsRepository settingsRepository, 
 							IPageRepository pageRepository, SearchService searchService, PageHistoryService historyService, IUserContext context, 
 							ListCache listCache, PageViewModelCache pageViewModelCache, SiteCache sitecache,
-                            TextMiddlewareBuilder textMiddlewareBuilder, IMarkupParser markupParser)
+                            TextMiddlewareBuilder textMiddlewareBuilder, IMarkupConverter markupConverter)
 		{
 			_searchService = searchService;
 			_historyService = historyService;
@@ -52,8 +52,8 @@ namespace Roadkill.Core.Services
 			_pageViewModelCache = pageViewModelCache;
 			_siteCache = sitecache;
 		    _textMiddlewareBuilder = textMiddlewareBuilder;
-		    _markupParser = markupParser;
-		    _markupLinkUpdater = new MarkupLinkUpdater(markupParser);
+		    _markupConverter = markupConverter;
+		    _markupLinkUpdater = new MarkupLinkUpdater(markupConverter);
 
 			ApplicationSettings = settings;
 			SettingsRepository = settingsRepository;
@@ -615,7 +615,7 @@ namespace Roadkill.Core.Services
 		/// </summary>
 		public string GetMenu(IUserContext userContext)
 		{
-			MenuParser parser = new MenuParser(_markupParser, SettingsRepository, _siteCache, userContext);
+			MenuParser parser = new MenuParser(_markupConverter, SettingsRepository, _siteCache, userContext);
 
 			// TODO: turn this into a theme-based bit of template HTML
 			StringBuilder builder = new StringBuilder();
@@ -632,7 +632,7 @@ namespace Roadkill.Core.Services
 		/// </summary>
 		public string GetBootStrapNavMenu(IUserContext userContext)
 		{
-			MenuParser parser = new MenuParser(_markupParser, SettingsRepository, _siteCache, userContext);
+			MenuParser parser = new MenuParser(_markupConverter, SettingsRepository, _siteCache, userContext);
 
 			// TODO: turn this into a theme-based bit of template HTML
 			StringBuilder builder = new StringBuilder();

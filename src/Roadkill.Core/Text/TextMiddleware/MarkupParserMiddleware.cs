@@ -5,16 +5,16 @@ namespace Roadkill.Core.Text.TextMiddleware
 {
     public class MarkupParserMiddleware : Middleware
     {
-        private IMarkupParser _parser;
+        private IMarkupConverter _converter;
 
-        public MarkupParserMiddleware(IMarkupParser parser)
+        public MarkupParserMiddleware(IMarkupConverter converter)
         {
-            _parser = parser;
+            _converter = converter;
         }
 
         public override PageHtml Invoke(PageHtml pageHtml)
         {
-            pageHtml.Html = _parser.ToHtml(pageHtml.Html);
+            pageHtml.Html = _converter.ToHtml(pageHtml.Html);
             return pageHtml;
         }
     }

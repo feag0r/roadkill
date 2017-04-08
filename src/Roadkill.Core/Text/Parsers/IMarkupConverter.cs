@@ -8,7 +8,7 @@ namespace Roadkill.Core.Text.Parsers
 	/// Represents a class that can convert a markup syntax into HTML. The markups syntax 
 	/// should include formatting support as well as images and links.
 	/// </summary>
-	public interface IMarkupParser
+	public interface IMarkupConverter
 	{
 		/// <summary>
 		/// Transforms the provided specific markup text to HTML

@@ -46,7 +46,7 @@ namespace Roadkill.Core.DependencyResolution.StructureMap.Registries
                     var builder = new TextMiddlewareBuilder();
 
                     var textPluginRunner = ctx.GetInstance<TextPluginRunner>();
-                    var markupParser = ctx.GetInstance<IMarkupParser>();
+                    var markupParser = ctx.GetInstance<IMarkupConverter>();
                     var htmlSanitizerFactory = ctx.GetInstance<IHtmlSanitizerFactory>();
                     var customTokenParser = ctx.GetInstance<CustomTokenParser>();
 
@@ -63,12 +63,12 @@ namespace Roadkill.Core.DependencyResolution.StructureMap.Registries
 
         private void WireupMarkdigParser()
         {
-			For<IMarkupParser>().Use("MarkdigParser", ctx =>
+			For<IMarkupConverter>().Use("MarkdigConverter", ctx =>
 			{
 				Func<HtmlImageTag, HtmlImageTag> imageTagParsed = OnImageParsed(ctx);
 				Func<HtmlLinkTag, HtmlLinkTag> linkParsed = OnLinkParsed(ctx);
 
-				var parser = new MarkdigParser();
+				var parser = new MarkdigConverter();
 				parser.ImageParsed = imageTagParsed;
 				parser.LinkParsed = linkParsed;
 

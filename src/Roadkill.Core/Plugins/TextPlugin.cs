@@ -234,11 +234,11 @@ namespace Roadkill.Core.Plugins
 		}
 
 		/// <summary>
-		/// Called before the page's markdown is parsed by the current <see cref="IMarkupParser"/>
+		/// Called before the page's markdown is parsed by the current <see cref="IMarkupConverter"/>
 		/// </summary>
 		/// <param name="markupText">The page's markup text.</param>
 		/// <returns>When overriden, this method should search the markup for the plugin's token, and replace it the parsed value. 
-		/// The plugin's token should also be replaced using <see cref="ParserSafeToken"/> to ensure the current <see cref="IMarkupParser"/> doesn't try
+		/// The plugin's token should also be replaced using <see cref="ParserSafeToken"/> to ensure the current <see cref="IMarkupConverter"/> doesn't try
 		/// to parse any markdown inside it.</returns>
 		public virtual string BeforeParse(string markupText)
 		{
@@ -246,7 +246,7 @@ namespace Roadkill.Core.Plugins
 		}
 
 		/// <summary>
-		/// Called after the page's markdown has been parsed by the current <see cref="IMarkupParser"/>.
+		/// Called after the page's markdown has been parsed by the current <see cref="IMarkupConverter"/>.
 		/// </summary>
 		/// <param name="html">The page's HTML.</param>
 		/// <returns>When overriden, this method can add any extra HTML to the page's content. This method shouldn't be used for adding 
