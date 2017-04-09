@@ -534,7 +534,7 @@
     <Compile Include="Services\LocalFileService.cs" />
     <Compile Include="Services\InstallationService.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="Text\Parsers\IMarkupConverter.cs" />
+    <Compile Include="Text\Parsers\IMarkupParser.cs" />
     <Compile Include="Text\Parsers\Links\Converters\AttachmentLinkConverter.cs" />
     <Compile Include="Text\Parsers\Links\Converters\IHtmlLinkTagConverter.cs" />
     <Compile Include="Text\Parsers\Links\Converters\SpecialLinkConverter.cs" />
@@ -546,7 +546,7 @@
     <Compile Include="Text\Parsers\Images\ImageHrefParser.cs" />
     <Compile Include="Text\Parsers\Links\LinkHrefParser.cs" />
     <Compile Include="Text\Parsers\Links\MarkupLinkUpdater.cs" />
-    <Compile Include="Text\Parsers\Markdig\MarkdigConverter.cs" />
+    <Compile Include="Text\Parsers\Markdig\MarkdigParser.cs" />
     <Compile Include="Text\Parsers\Markdig\MarkdigImageAndLinkWalker.cs" />
     <Compile Include="Text\Plugins\TextPluginRunner.cs" />
     <Compile Include="Text\Menu\MenuParser.cs" />

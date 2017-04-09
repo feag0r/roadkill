@@ -8,7 +8,7 @@ using Roadkill.Core.Text.Parsers.Links;
 
 namespace Roadkill.Core.Text.Parsers.Markdig
 {
-	public class MarkdigConverter : IMarkupConverter
+	public class MarkdigParser : IMarkupParser
 	{
 		public Func<HtmlImageTag, HtmlImageTag> ImageParsed { get; set; }
 		public Func<HtmlLinkTag, HtmlLinkTag> LinkParsed { get; set; }

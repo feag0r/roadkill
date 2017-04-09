@@ -8,11 +8,11 @@ namespace Roadkill.Core.Text.Parsers.Links
     /// </summary>
 	public class MarkupLinkUpdater
 	{
-		private IMarkupConverter _converter;
+		private IMarkupParser _parser;
 
-		public MarkupLinkUpdater(IMarkupConverter converter)
+		public MarkupLinkUpdater(IMarkupParser parser)
 		{
-			_converter = converter;
+			_parser = parser;
 		}
 
 		/// <summary>
@@ -91,7 +91,7 @@ namespace Roadkill.Core.Text.Parsers.Links
 
 		private string AddDashesForMarkdownTitle(string title, bool escape = true)
 		{
-			if (_converter is object)
+			if (_parser is object)
 			{
 				if (escape)
 					title = title.Replace(" ", @"\-");
