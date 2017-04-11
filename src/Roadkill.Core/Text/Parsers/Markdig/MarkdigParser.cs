@@ -18,11 +18,10 @@ namespace Roadkill.Core.Text.Parsers.Markdig
 			if (string.IsNullOrEmpty(markdown))
 				return "";
 
-			var pipeline = new MarkdownPipelineBuilder()
-                                .UseAdvancedExtensions()
-                                .Build();
+			var pipeline = new MarkdownPipelineBuilder();
+            MarkdownPipeline markdownPipeline = pipeline.UseAdvancedExtensions().Build();
 
-			var doc = Markdown.Parse(markdown, pipeline);
+			var doc = Markdown.Parse(markdown, markdownPipeline);
 			var walker = new MarkdigImageAndLinkWalker((e) =>
 				{
 					if (ImageParsed != null)

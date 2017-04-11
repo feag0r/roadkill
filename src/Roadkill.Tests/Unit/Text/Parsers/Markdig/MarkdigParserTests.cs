@@ -99,5 +99,32 @@ namespace Roadkill.Tests.Unit.Text.Parsers.Markdig
             // then
             Assert.That(html, Is.EqualTo(expectedHtml));
         }
-    }
+
+		[Test]
+		public void should_parse_advanced_markdown_with_tasks_autoids_css_and_autolinking()
+		{
+			// given - strikethroughs aren't working yet with Markdig
+			string markdown = @"- [ ] Task 1
+- [ ] Task 2
+
+# myh1 with a class { .main }
+
+http://www.google.com
+";
+			string expectedHtml = @"<ul class=""contains-task-list"">
+<li class=""task-list-item""> Task 1</li>
+<li class=""task-list-item""> Task 2</li>
+</ul>
+<h1 id=""myh1-with-a-class"" class=""main"">myh1 with a class</h1>
+<p><a href=""http://www.google.com"" rel=""nofollow"">http://www.google.com</a></p>" + "\n";
+
+			var parser = new MarkdigParser();
+
+			// when
+			string html = parser.ToHtml(markdown);
+
+			// then
+			Assert.That(html, Is.EqualTo(expectedHtml), html);
+		}
+	}
 }
