@@ -454,6 +454,7 @@
     <Compile Include="Unit\Text\Parsers\Links\Converters\AttachmentLinkConverterTests.cs" />
     <Compile Include="Unit\Text\Parsers\Links\LinkHrefParserTests.cs" />
     <Compile Include="Unit\StubsAndMocks\UrlHelperMock.cs" />
+    <Compile Include="Unit\Text\Parsers\Links\UrlHelperWrapperTests.cs" />
     <Compile Include="Unit\Text\Plugins\TextPluginRunnerTests.cs" />
     <Compile Include="Unit\Text\Sanitizer\HtmlSanitizerFactoryTests.cs" />
     <Compile Include="Unit\Text\Parsers\Markdig\MarkdigImageAndLinkWalkerTests.cs" />

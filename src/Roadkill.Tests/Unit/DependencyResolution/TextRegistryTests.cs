@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Web;
+using System.Web.Mvc;
 using System.Web.Routing;
 using NUnit.Framework;
 using Roadkill.Core.Configuration;
@@ -25,10 +26,13 @@ namespace Roadkill.Tests.Unit.DependencyResolution
 	public class TextRegistryTests : RegistryTestsBase
     {
 	    private RepositoryFactoryMock _repositoryFactory;
+	    private UrlHelperMock _urlHelper;
 
 	    [SetUp]
 		public void Setup()
 		{
+			_urlHelper = new UrlHelperMock();
+
 			// Inject a fake HttpContext for UrlHelper, used by UrlResolver
 			var httpContext = MvcMockHelpers.FakeHttpContext("~/url");
 			Container.Configure(x => x.For<HttpContextBase>().Use(httpContext));
@@ -40,14 +44,14 @@ namespace Roadkill.Tests.Unit.DependencyResolution
 				_repositoryFactory.SettingsRepository = new SettingsRepositoryMock();
 
 				x.For<IRepositoryFactory>().Use(_repositoryFactory);
+
+				// And UrlHelper so no RouteTable is required
+				x.For<UrlHelper>().Use(_urlHelper);
 			});
 		}
 
 		private void AddPage(string title)
 		{
-			// Required by UrlHelper
-			Routing.Register(RouteTable.Routes);
-
 			_repositoryFactory.PageRepository.AddNewPage(new Page() { Id = 1, Title = title }, "some text", "user", DateTime.Today);
 		}
 
@@ -166,10 +170,13 @@ namespace Roadkill.Tests.Unit.DependencyResolution
 		public void should_configure_IMarkupParser_linkparsed_event()
 		{
 			// Arrange
-			AddPage("My page with spaces in");
+			_urlHelper.ExpectedAction = "/wiki/1/my-page-with-spaces-in";
+			
 			IContainer container = Container;
 			var markupParser = container.GetInstance<IMarkupParser>();
 			var htmlLinkTag = new HtmlLinkTag("My page with spaces in", "My page with spaces in", "My link text", "_new");
+
+			AddPage("My page with spaces in");
 
 			// Act
 			htmlLinkTag = markupParser.LinkParsed(htmlLinkTag);

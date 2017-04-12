@@ -6,12 +6,14 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using NUnit.Framework;
 using Roadkill.Core.Attachments;
+using Roadkill.Core.Database;
 using Roadkill.Core.DependencyResolution;
 using Roadkill.Core.Mvc.Attributes;
 using Roadkill.Core.Mvc.Controllers;
 using Roadkill.Core.Mvc.ViewModels;
 using Roadkill.Core.Mvc.WebApi;
 using Roadkill.Core.Text.Parsers.Links;
+using Roadkill.Tests.Unit.StubsAndMocks;
 using Roadkill.Tests.Unit.StubsAndMocks.Mvc;
 using StructureMap;
 

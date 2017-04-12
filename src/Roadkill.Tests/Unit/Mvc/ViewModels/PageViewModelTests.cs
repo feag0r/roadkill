@@ -169,7 +169,6 @@ namespace Roadkill.Tests.Unit.Mvc.ViewModels
 			Assert.That(model.PluginFooterHtml, Is.EqualTo(plugin.FooterContent));
 			Assert.That(model.PluginPreContainer, Is.EqualTo(plugin.PreContainerHtml));
 			Assert.That(model.PluginPostContainer, Is.EqualTo(plugin.PostContainerHtml));
-
 		}
 
 		[Test]
