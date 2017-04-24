@@ -109,6 +109,7 @@ namespace Roadkill.Core.Text.Parsers.Links
 
 		private void ConvertSpecialLinkToFullPath(HtmlLinkTag htmlLinkTag)
 		{
+			// note: "~" is replaced by ASP.NET HttpContext
 			string href = htmlLinkTag.OriginalHref;
 			htmlLinkTag.Href = ConvertToAbsolutePath("~/wiki/" + href);
 		}
