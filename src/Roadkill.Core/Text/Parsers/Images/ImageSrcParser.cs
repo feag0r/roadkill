@@ -1,20 +1,17 @@
 using System;
 using System.Text.RegularExpressions;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.Routing;
 using Roadkill.Core.Configuration;
-using Roadkill.Core.Text.Parsers.Links;
 
 namespace Roadkill.Core.Text.Parsers.Images
 {
-	public class ImageHrefParser
+	public class ImageSrcParser
 	{
 		private readonly ApplicationSettings _applicationSettings;
 		private static readonly Regex _imgFileRegex = new Regex("^File:", RegexOptions.IgnoreCase);
 		private readonly UrlHelper _urlHelper;
 
-		public ImageHrefParser(ApplicationSettings applicationSettings, UrlHelper urlHelper)
+		public ImageSrcParser(ApplicationSettings applicationSettings, UrlHelper urlHelper)
 		{
 			if (applicationSettings == null)
 				throw new ArgumentNullException(nameof(applicationSettings));

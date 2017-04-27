@@ -344,6 +344,7 @@
     <Compile Include="Unit\Database\RepositoryInfoTests.cs" />
     <Compile Include="Unit\Database\SchemaTests.cs" />
     <Compile Include="Unit\DependencyResolution\LocatorStartupTests.cs" />
+    <Compile Include="Unit\DependencyResolution\MarkdigParserFactoryTests.cs" />
     <Compile Include="Unit\DependencyResolution\RegistryTestsBase.cs" />
     <Compile Include="Unit\DependencyResolution\SecurityRegistryTests.cs" />
     <Compile Include="Unit\DependencyResolution\PluginsRegistryTests.cs" />

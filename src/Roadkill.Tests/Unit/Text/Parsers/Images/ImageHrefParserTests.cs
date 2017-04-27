@@ -8,7 +8,7 @@ namespace Roadkill.Tests.Unit.Text.Parsers.Images
 	public class ImageHrefParserTests
 	{
 		private ApplicationSettings _applicationSettings;
-		private ImageHrefParser _hrefParser;
+		private ImageSrcParser _srcParser;
 		private UrlHelperMock _urlHelper;
 
 		[SetUp]
@@ -18,7 +18,7 @@ namespace Roadkill.Tests.Unit.Text.Parsers.Images
 			_applicationSettings = container.ApplicationSettings;
 			_urlHelper = new UrlHelperMock();
 
-			_hrefParser = new ImageHrefParser(_applicationSettings, _urlHelper);
+			_srcParser = new ImageSrcParser(_applicationSettings, _urlHelper);
 		}
 
 		[Test]
@@ -31,7 +31,7 @@ namespace Roadkill.Tests.Unit.Text.Parsers.Images
 			HtmlImageTag htmlImageTag = new HtmlImageTag(imageUrl, imageUrl, "alt", "title");
 
 			// Act
-			HtmlImageTag actualTag = _hrefParser.Parse(htmlImageTag);
+			HtmlImageTag actualTag = _srcParser.Parse(htmlImageTag);
 
 			// Assert
 			Assert.That(actualTag.Src, Is.EqualTo(imageUrl));
@@ -46,7 +46,7 @@ namespace Roadkill.Tests.Unit.Text.Parsers.Images
 			HtmlImageTag htmlImageTag = new HtmlImageTag(path, path, "alt", "title");
 
 			// Act
-			HtmlImageTag actualTag = _hrefParser.Parse(htmlImageTag);
+			HtmlImageTag actualTag = _srcParser.Parse(htmlImageTag);
 
 			// Assert
 			Assert.That(actualTag.Src, Is.EqualTo(expectedPath));

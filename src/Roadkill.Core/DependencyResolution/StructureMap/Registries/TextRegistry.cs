@@ -1,12 +1,9 @@
-﻿using System;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using Roadkill.Core.Configuration;
 using Roadkill.Core.Database;
 using Roadkill.Core.Plugins;
 using Roadkill.Core.Text.CustomTokens;
 using Roadkill.Core.Text.Parsers;
-using Roadkill.Core.Text.Parsers.Images;
-using Roadkill.Core.Text.Parsers.Links;
 using Roadkill.Core.Text.Parsers.Markdig;
 using Roadkill.Core.Text.Plugins;
 using Roadkill.Core.Text.Sanitizer;
@@ -16,95 +13,59 @@ using StructureMap.Graph;
 
 namespace Roadkill.Core.DependencyResolution.StructureMap.Registries
 {
-    public class TextRegistry : Registry
-    {
-        public TextRegistry()
-        {
-            Scan(ScanTypes);
-            ConfigureInstances();
-        }
-
-        private void ScanTypes(IAssemblyScanner scanner)
-        {
-            scanner.TheCallingAssembly();
-            scanner.SingleImplementationsOfInterface();
-            scanner.WithDefaultConventions();
-
-            scanner.AddAllTypesOf<CustomTokenParser>();
-        }
-
-        private void ConfigureInstances()
-        {
-            For<IPluginFactory>().Use<PluginFactory>();
-            WireupMarkdigParser();
-            For<IHtmlSanitizerFactory>().Use<HtmlSanitizerFactory>();
-
-            For<TextMiddlewareBuilder>()
-                .AlwaysUnique()
-                .Use("TextMiddlewareBuilder", ctx =>
-                {
-                    var builder = new TextMiddlewareBuilder();
-
-                    var textPluginRunner = ctx.GetInstance<TextPluginRunner>();
-                    var markupParser = ctx.GetInstance<IMarkupParser>();
-                    var htmlSanitizerFactory = ctx.GetInstance<IHtmlSanitizerFactory>();
-                    var customTokenParser = ctx.GetInstance<CustomTokenParser>();
-
-                    builder.Use(new TextPluginBeforeParseMiddleware(textPluginRunner));
-                    builder.Use(new MarkupParserMiddleware(markupParser));
-                    builder.Use(new HarmfulTagMiddleware(htmlSanitizerFactory));
-                    builder.Use(new CustomTokenMiddleware(customTokenParser));
-                    builder.Use(new TextPluginAfterParseMiddleware(textPluginRunner));
-
-                    return builder;
-
-                }).Singleton();
-        }
-
-        private void WireupMarkdigParser()
-        {
-			For<IMarkupParser>().Use("MarkdigParser", ctx =>
-			{
-				Func<HtmlImageTag, HtmlImageTag> imageTagParsed = OnImageParsed(ctx);
-				Func<HtmlLinkTag, HtmlLinkTag> linkParsed = OnLinkParsed(ctx);
-
-				var parser = new MarkdigParser();
-				parser.ImageParsed = imageTagParsed;
-				parser.LinkParsed = linkParsed;
-
-				return parser;
-			});
-        }
-
-		private Func<HtmlLinkTag, HtmlLinkTag> OnLinkParsed(IContext ctx)
+	public class TextRegistry : Registry
+	{
+		public TextRegistry()
 		{
-			// Link parsing callback
-			return (htmlImageTag) =>
-			{
-				var pageRepository = ctx.GetInstance<IPageRepository>();
-				var applicationSettings = ctx.GetInstance<ApplicationSettings>();
-				var urlHelper = ctx.GetInstance<UrlHelper>();
-
-				var tokenParser = new LinkHrefParser(pageRepository, applicationSettings, urlHelper);
-				htmlImageTag = tokenParser.Parse(htmlImageTag);
-
-				return htmlImageTag;
-			};
+			Scan(ScanTypes);
+			ConfigureInstances();
 		}
 
-		private Func<HtmlImageTag, HtmlImageTag> OnImageParsed(IContext ctx)
+		private void ScanTypes(IAssemblyScanner scanner)
 		{
-			// Image parsing callback
-			return (htmlImageTag) =>
-			{
-				var appSettings = ctx.GetInstance<ApplicationSettings>();
-				var urlHelper = ctx.GetInstance<UrlHelper>();
+			scanner.TheCallingAssembly();
+			scanner.SingleImplementationsOfInterface();
+			scanner.WithDefaultConventions();
 
-				var provider = new ImageHrefParser(appSettings, urlHelper);
-				htmlImageTag = provider.Parse(htmlImageTag);
+			scanner.AddAllTypesOf<CustomTokenParser>();
+		}
 
-				return htmlImageTag;
-			};
+		private void ConfigureInstances()
+		{
+			For<IPluginFactory>().Use<PluginFactory>();
+			For<IMarkdigParserFactory>().Use<MarkdigParserFactory>();
+			For<IHtmlSanitizerFactory>().Use<HtmlSanitizerFactory>();
+
+			For<TextMiddlewareBuilder>()
+				.AlwaysUnique()
+				.Use("TextMiddlewareBuilder", ctx =>
+				{
+					var builder = new TextMiddlewareBuilder();
+
+					var textPluginRunner = ctx.GetInstance<TextPluginRunner>();
+					var markupParser = GetMarkdigParser(ctx);
+					var htmlSanitizerFactory = ctx.GetInstance<IHtmlSanitizerFactory>();
+					var customTokenParser = ctx.GetInstance<CustomTokenParser>();
+
+					builder.Use(new TextPluginBeforeParseMiddleware(textPluginRunner));
+					builder.Use(new MarkupParserMiddleware(markupParser));
+					builder.Use(new HarmfulTagMiddleware(htmlSanitizerFactory));
+					builder.Use(new CustomTokenMiddleware(customTokenParser));
+					builder.Use(new TextPluginAfterParseMiddleware(textPluginRunner));
+
+					return builder;
+
+				}).Singleton();
+		}
+
+		private MarkdigParser GetMarkdigParser(IContext ctx)
+		{
+			var pageRepository = ctx.GetInstance<IPageRepository>();
+			var applicationSettings = ctx.GetInstance<ApplicationSettings>();
+			var urlHelper = ctx.GetInstance<UrlHelper>();
+			var factory = ctx.GetInstance<IMarkdigParserFactory>();
+
+			return factory.Create(pageRepository, applicationSettings, urlHelper);
 		}
 	}
 }

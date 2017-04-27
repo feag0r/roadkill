@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Routing;
 using NUnit.Framework;
-using Roadkill.Core.Configuration;
 using Roadkill.Core.Database;
-using Roadkill.Core.DependencyResolution.StructureMap.Registries;
-using Roadkill.Core.Mvc.Setup;
 using Roadkill.Core.Plugins;
 using Roadkill.Core.Text.CustomTokens;
 using Roadkill.Core.Text.Parsers;
-using Roadkill.Core.Text.Parsers.Images;
-using Roadkill.Core.Text.Parsers.Links;
 using Roadkill.Core.Text.Parsers.Markdig;
 using Roadkill.Core.Text.Sanitizer;
 using Roadkill.Core.Text.TextMiddleware;
@@ -24,11 +18,11 @@ namespace Roadkill.Tests.Unit.DependencyResolution
 	[TestFixture]
 	[Category("Unit")]
 	public class TextRegistryTests : RegistryTestsBase
-    {
-	    private RepositoryFactoryMock _repositoryFactory;
-	    private UrlHelperMock _urlHelper;
+	{
+		private RepositoryFactoryMock _repositoryFactory;
+		private UrlHelperMock _urlHelper;
 
-	    [SetUp]
+		[SetUp]
 		public void Setup()
 		{
 			_urlHelper = new UrlHelperMock();
@@ -72,14 +66,14 @@ namespace Roadkill.Tests.Unit.DependencyResolution
 			IContainer container = Container;
 
 			// Act
-		    var builder = container.GetInstance<TextMiddlewareBuilder>();
+			var builder = container.GetInstance<TextMiddlewareBuilder>();
 
-            // Assert
-            Assert.That(builder, Is.Not.Null);
+			// Assert
+			Assert.That(builder, Is.Not.Null);
 
-		    string html = builder.Execute("**markdown**");
-            Assert.That(html, Is.EqualTo("<p><strong>markdown</strong></p>\n")); // a basic smoke test of the middleware chain
-        }
+			string html = builder.Execute("**markdown**");
+			Assert.That(html, Is.EqualTo("<p><strong>markdown</strong></p>\n")); // a basic smoke test of the middleware chain
+		}
 
 		[Test]
 		public void should_register_TextMiddlewareBuilder_in_the_correct_order()
@@ -115,7 +109,7 @@ namespace Roadkill.Tests.Unit.DependencyResolution
 
 			string html = builder.Execute("![Image title](" + imageUrl + ")");
 			// assert image was called/html
-			Assert.That(html, Is.EqualTo("<p><img src=\""+ imageUrl+"\" class=\"img-responsive\"></p>\n"));
+			Assert.That(html, Is.EqualTo("<p><img src=\"" + imageUrl + "\" class=\"img-responsive\"></p>\n"));
 		}
 
 		[Test]
@@ -138,69 +132,21 @@ namespace Roadkill.Tests.Unit.DependencyResolution
 		}
 
 		[Test]
-		public void should_use_markdigparser_as_imarkupparser()
+		public void should_use_markdigparser_as_imarkupparser_using_factory()
 		{
 			// Arrange
 			IContainer container = Container;
 
 			// Act
+			var mardigParserFactory = container.GetInstance<IMarkdigParserFactory>();
 			var markupParser = container.GetInstance<IMarkupParser>();
 
 			// Assert
+			Assert.That(mardigParserFactory, Is.Not.Null);
+			Assert.That(mardigParserFactory, Is.TypeOf<MarkdigParserFactory>());
+
 			Assert.That(markupParser, Is.Not.Null);
 			Assert.That(markupParser, Is.TypeOf<MarkdigParser>());
-		}
-
-		[Test]
-		public void should_wire_markdigparser_events()
-		{
-			// Arrange
-			IContainer container = Container;
-
-			// Act
-			var markupParser = container.GetInstance<IMarkupParser>();
-
-			// Assert
-			Assert.That(markupParser, Is.Not.Null);
-			Assert.That(markupParser.LinkParsed, Is.Not.Null);
-			Assert.That(markupParser.ImageParsed, Is.Not.Null);
-		}
-
-		[Test]
-		public void should_configure_IMarkupParser_linkparsed_event()
-		{
-			// Arrange
-			_urlHelper.ExpectedAction = "/wiki/1/my-page-with-spaces-in";
-			
-			IContainer container = Container;
-			var markupParser = container.GetInstance<IMarkupParser>();
-			var htmlLinkTag = new HtmlLinkTag("My page with spaces in", "My page with spaces in", "My link text", "_new");
-
-			AddPage("My page with spaces in");
-
-			// Act
-			htmlLinkTag = markupParser.LinkParsed(htmlLinkTag);
-
-			// Assert
-			Assert.That(htmlLinkTag.Href, Is.EqualTo("/wiki/1/my-page-with-spaces-in"));
-		}
-
-		[Test]
-		public void should_configure_IMarkupParser_imageparsed_event()
-		{
-			// Arrange
-			ConfigReaderWriterStub.ApplicationSettings.AttachmentsRoutePath = "MyAttachments";
-
-			IContainer container = Container;
-			var markupParser = container.GetInstance<IMarkupParser>();
-			var htmlImageTag = new HtmlImageTag("/my.gif", "/my.gif", "alt", "title", HtmlImageTag.HorizontalAlignment.Right);
-
-			// Act
-			htmlImageTag = markupParser.ImageParsed(htmlImageTag);
-
-			// Assert
-			Assert.That(htmlImageTag.OriginalSrc, Is.EqualTo("/my.gif"));
-			Assert.That(htmlImageTag.Src, Is.EqualTo("/MyAttachments/my.gif"));
 		}
 	}
 }

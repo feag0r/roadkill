@@ -533,12 +533,14 @@
     <Compile Include="Text\Parsers\Links\Converters\AttachmentLinkConverter.cs" />
     <Compile Include="Text\Parsers\Links\Converters\IHtmlLinkTagConverter.cs" />
     <Compile Include="Text\Parsers\Links\Converters\SpecialLinkConverter.cs" />
+    <Compile Include="Text\Parsers\Markdig\IMarkdigParserFactory.cs" />
+    <Compile Include="Text\Parsers\Markdig\MarkdigParserFactory.cs" />
     <Compile Include="Text\Sanitizer\HtmlSanitizerFactory.cs" />
     <Compile Include="Text\Sanitizer\IHtmlSanitizerFactory.cs" />
     <Compile Include="Text\TextMiddleware\HarmfulTagMiddleware.cs" />
     <Compile Include="Text\TextMiddleware\MarkupParserMiddleware.cs" />
     <Compile Include="Text\TextMiddleware\Middleware.cs" />
-    <Compile Include="Text\Parsers\Images\ImageHrefParser.cs" />
+    <Compile Include="Text\Parsers\Images\ImageSrcParser.cs" />
     <Compile Include="Text\Parsers\Links\LinkHrefParser.cs" />
     <Compile Include="Text\Parsers\Links\MarkupLinkUpdater.cs" />
     <Compile Include="Text\Parsers\Markdig\MarkdigParser.cs" />
