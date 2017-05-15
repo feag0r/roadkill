@@ -91,7 +91,8 @@ namespace Roadkill.Core.Services
 				_pageViewModelCache.RemoveAll(); // completely clear the cache to update any reciprocal links.
 
 				// Update the lucene index
-				PageViewModel savedModel = new PageViewModel(pageContent, _textMiddlewareBuilder);
+				PageHtml pageHtml = _textMiddlewareBuilder.Execute(pageContent.Text);
+				PageViewModel savedModel = new PageViewModel(pageContent, pageHtml);
 				try
 				{
 					_searchService.Add(savedModel);
@@ -129,8 +130,12 @@ namespace Roadkill.Core.Services
 					if (pageModels == null)
 					{
 						IEnumerable<Page> pages = PageRepository.AllPages().OrderBy(p => p.Title);
-						pageModels = from page in pages
-									select new PageViewModel(PageRepository.GetLatestPageContent(page.Id), _textMiddlewareBuilder);
+						pageModels = pages.Select(page =>
+						{
+							var pageContent = PageRepository.GetLatestPageContent(page.Id);
+							var pageHtml = _textMiddlewareBuilder.Execute(pageContent.Text);
+							return new PageViewModel(pageContent, pageHtml);
+						});
 
 						_listCache.Add<PageViewModel>(cacheKey, pageModels);
 					}
@@ -173,9 +178,14 @@ namespace Roadkill.Core.Services
 				IEnumerable<PageViewModel> models = _listCache.Get<PageViewModel>(cacheKey);
 				if (models == null)
 				{
+				
 					IEnumerable<Page> pages = PageRepository.FindPagesCreatedBy(userName);
-					models = from page in pages
-								select new PageViewModel(PageRepository.GetLatestPageContent(page.Id), _textMiddlewareBuilder);
+					models = pages.Select(p =>
+					{
+						PageContent pageContent = PageRepository.GetLatestPageContent(p.Id);
+						PageHtml html = _textMiddlewareBuilder.Execute(pageContent.Text);
+						return new PageViewModel(pageContent, html);
+					});
 
 					_listCache.Add<PageViewModel>(cacheKey, models);
 				}
@@ -252,7 +262,12 @@ namespace Roadkill.Core.Services
 				// Update the lucene index before we actually delete the page.
 				try
 				{
-					PageViewModel model = new PageViewModel(PageRepository.GetLatestPageContent(page.Id), _textMiddlewareBuilder);
+					// TODO: why does this need the HTML to delete?
+
+					PageContent pageContent = PageRepository.GetLatestPageContent(page.Id);
+					PageHtml html = _textMiddlewareBuilder.Execute(pageContent.Text);
+
+					PageViewModel model = new PageViewModel(pageContent, html);
 					_searchService.Delete(model);
 				}
 				catch (SearchException ex)
@@ -325,8 +340,10 @@ namespace Roadkill.Core.Services
 					
 					if (page != null)
 					{
-						pageModel = new PageViewModel(PageRepository.GetLatestPageContent(page.Id), _textMiddlewareBuilder);
-						_pageViewModelCache.UpdateHomePage(pageModel);
+						PageContent pageContent = PageRepository.GetLatestPageContent(page.Id);
+						PageHtml html = _textMiddlewareBuilder.Execute(pageContent.Text);
+
+						return new PageViewModel(pageContent, html);
 					}
 				}
 
@@ -355,8 +372,13 @@ namespace Roadkill.Core.Services
 				{
 
 					IEnumerable<Page> pages = PageRepository.FindPagesContainingTag(tag).OrderBy(p => p.Title);
-					models = from page in pages
-								select new PageViewModel(PageRepository.GetLatestPageContent(page.Id), _textMiddlewareBuilder);
+					models = pages.Select(p =>
+					{
+						PageContent pageContent = PageRepository.GetLatestPageContent(p.Id);
+						PageHtml html = _textMiddlewareBuilder.Execute(pageContent.Text);
+
+						return new PageViewModel(pageContent, html);
+					});
 
 					_listCache.Add<PageViewModel>(cacheKey, models);
 				}
@@ -385,9 +407,16 @@ namespace Roadkill.Core.Services
 				Page page = PageRepository.GetPageByTitle(title);
 
 				if (page == null)
+				{
 					return null;
+				}
 				else
-					return new PageViewModel(PageRepository.GetLatestPageContent(page.Id), _textMiddlewareBuilder);
+				{
+					PageContent pageContent = PageRepository.GetLatestPageContent(page.Id);
+					PageHtml html = _textMiddlewareBuilder.Execute(pageContent.Text);
+
+					return new PageViewModel(pageContent, html);
+				}
 			}
 			catch (DatabaseException ex)
 			{
@@ -424,13 +453,20 @@ namespace Roadkill.Core.Services
 						// used on the second call anyway, so performance isn't an issue.
 						if (ApplicationSettings.UseObjectCache)
 						{
-							pageModel = new PageViewModel(PageRepository.GetLatestPageContent(page.Id), _textMiddlewareBuilder);
+							PageContent pageContent = PageRepository.GetLatestPageContent(page.Id);
+							PageHtml html = _textMiddlewareBuilder.Execute(pageContent.Text);
+
+							return new PageViewModel(pageContent, html);
 						}
 						else
 						{
 							if (loadContent)
 							{
-								pageModel = new PageViewModel(PageRepository.GetLatestPageContent(page.Id), _textMiddlewareBuilder);
+
+								PageContent pageContent = PageRepository.GetLatestPageContent(page.Id);
+								PageHtml html = _textMiddlewareBuilder.Execute(pageContent.Text);
+
+								pageModel = new PageViewModel(pageContent, html);
 							}
 							else
 							{
@@ -494,7 +530,8 @@ namespace Roadkill.Core.Services
 				}
 
 				// Update the lucene index
-				PageViewModel updatedModel = new PageViewModel(PageRepository.GetLatestPageContent(page.Id), _textMiddlewareBuilder);
+				PageHtml pageHtml = _textMiddlewareBuilder.Execute(pageContent.Text);
+				PageViewModel updatedModel = new PageViewModel(PageRepository.GetLatestPageContent(page.Id), pageHtml);
 				_searchService.Update(updatedModel);
 			}
 			catch (DatabaseException ex)

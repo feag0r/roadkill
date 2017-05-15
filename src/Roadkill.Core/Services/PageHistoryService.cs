@@ -7,6 +7,7 @@ using Roadkill.Core.Database;
 using Roadkill.Core.Database.Repositories;
 using Roadkill.Core.Mvc.ViewModels;
 using Roadkill.Core.Text;
+using Roadkill.Core.Text.Menu;
 using Roadkill.Core.Text.TextMiddleware;
 
 namespace Roadkill.Core.Services
@@ -75,7 +76,9 @@ namespace Roadkill.Core.Services
 				List<PageViewModel> versions = new List<PageViewModel>();
 
 				PageContent mainContent = PageRepository.GetPageContentById(mainVersionId);
-				versions.Add(new PageViewModel(mainContent, _textMiddlewareBuilder));
+				PageHtml html = _textMiddlewareBuilder.Execute(mainContent.Text);
+
+				versions.Add(new PageViewModel(mainContent, html));
 
 				if (mainContent.VersionNumber == 1)
 				{
@@ -94,7 +97,10 @@ namespace Roadkill.Core.Services
 						}
 						else
 						{
-							model = new PageViewModel(previousContent, _textMiddlewareBuilder);
+							PageContent pageContent = PageRepository.GetLatestPageContent(previousContent.Page.Id);
+							html = _textMiddlewareBuilder.Execute(pageContent.Text);
+							model = new PageViewModel(previousContent, html);
+
 							_pageViewModelCache.Add(mainContent.Page.Id, mainContent.VersionNumber - 1, model);
 						}
 					}

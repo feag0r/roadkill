@@ -14,7 +14,6 @@ namespace Roadkill.Tests.Unit.Text.Menu
 	[Category("Unit")]
 	public class MenuParserTests
 	{
-		private PluginFactoryMock _pluginFactory;
 		private PageRepositoryMock _pageRepository;
 		private SettingsRepositoryMock _settingsRepository;
 		private UserContextStub _userContext;
@@ -27,7 +26,7 @@ namespace Roadkill.Tests.Unit.Text.Menu
 	    [SetUp]
 		public void Setup()
 		{
-			_pluginFactory = new PluginFactoryMock();
+			new PluginFactoryMock();
 
 			_pageRepository = new PageRepositoryMock();
 

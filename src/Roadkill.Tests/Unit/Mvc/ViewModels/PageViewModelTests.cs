@@ -7,6 +7,7 @@ using Roadkill.Core.Configuration;
 using Roadkill.Core.Database;
 using Roadkill.Core.Mvc.ViewModels;
 using Roadkill.Core.Text;
+using Roadkill.Core.Text.Menu;
 using Roadkill.Core.Text.TextMiddleware;
 using Roadkill.Tests.Unit.StubsAndMocks;
 
@@ -52,7 +53,7 @@ namespace Roadkill.Tests.Unit.Mvc.ViewModels
 		public void PageContent_Constructor_Should_Throw_Exception_When_PageContent_IsNull()
 		{
 			// Arrange + Act + Assert
-			PageViewModel model = new PageViewModel(null, _textMiddlewareBuilder);
+			PageViewModel model = new PageViewModel(null, new PageHtml());
 		}
 
 		[Test]
@@ -64,7 +65,7 @@ namespace Roadkill.Tests.Unit.Mvc.ViewModels
 			content.Page = null;
 
 			// Act + Assert
-			PageViewModel model = new PageViewModel(content, _textMiddlewareBuilder);
+			PageViewModel model = new PageViewModel(content, new PageHtml());
 		}
 
 		[Test]
@@ -129,6 +130,8 @@ namespace Roadkill.Tests.Unit.Mvc.ViewModels
 			content.Text = "some text **in bold**";
 			content.VersionNumber = 5;
 
+			var pageHtml = new PageHtml("my html");
+
 			TextPluginStub plugin = new TextPluginStub();
 			plugin.IsCacheable = false;
 			plugin.HeadContent = "head content";
@@ -141,7 +144,7 @@ namespace Roadkill.Tests.Unit.Mvc.ViewModels
 			_pluginFactory.RegisterTextPlugin(plugin);
 
 			// Act
-			PageViewModel model = new PageViewModel(content, _textMiddlewareBuilder);
+			PageViewModel model = new PageViewModel(content, pageHtml);
 
 			// Assert
 			Assert.That(model.Id, Is.EqualTo(content.Page.Id));

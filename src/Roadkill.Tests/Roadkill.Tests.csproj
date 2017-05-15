@@ -450,7 +450,7 @@
     <Compile Include="Unit\StubsAndMocks\UserServiceStub.cs" />
     <Compile Include="Unit\StubsAndMocks\TextPluginStub.cs" />
     <Compile Include="Unit\StubsAndMocks\WikiImporterMock.cs" />
-    <Compile Include="Unit\Text\Parsers\Images\ImageHrefParserTests.cs" />
+    <Compile Include="Unit\Text\Parsers\Images\ImageSrcParserTests.cs" />
     <Compile Include="Unit\Text\Parsers\Links\Converters\SpecialLinkConverterTests.cs" />
     <Compile Include="Unit\Text\Parsers\Links\Converters\AttachmentLinkConverterTests.cs" />
     <Compile Include="Unit\Text\Parsers\Links\LinkHrefParserTests.cs" />

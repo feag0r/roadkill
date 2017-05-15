@@ -5,7 +5,7 @@ using Roadkill.Tests.Unit.StubsAndMocks;
 
 namespace Roadkill.Tests.Unit.Text.Parsers.Images
 {
-	public class ImageHrefParserTests
+	public class ImageSrcParserTests
 	{
 		private ApplicationSettings _applicationSettings;
 		private ImageSrcParser _srcParser;

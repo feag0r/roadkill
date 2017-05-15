@@ -18,6 +18,7 @@ using Roadkill.Core.Database.Repositories;
 using Roadkill.Core.Mvc.ViewModels;
 using Roadkill.Core.Plugins;
 using Roadkill.Core.Text;
+using Roadkill.Core.Text.Menu;
 using Roadkill.Core.Text.TextMiddleware;
 
 namespace Roadkill.Core.Services
@@ -206,7 +207,10 @@ namespace Roadkill.Core.Services
 				{
 					foreach (Page page in PageRepository.AllPages().ToList())
 					{
-						PageViewModel pageModel = new PageViewModel(PageRepository.GetLatestPageContent(page.Id), _textMiddlewareBuilder);
+						PageContent pageContent = PageRepository.GetLatestPageContent(page.Id);
+						PageHtml html = _textMiddlewareBuilder.Execute(pageContent.Text);
+
+						PageViewModel pageModel = new PageViewModel(pageContent, html);
 
 						Document document = new Document();
 						document.Add(new Field("id", pageModel.Id.ToString(), Field.Store.YES, Field.Index.ANALYZED));

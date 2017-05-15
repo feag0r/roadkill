@@ -52,7 +52,7 @@ namespace Roadkill.Core.Mvc.ViewModels
 		/// The content after it has been transformed into HTML by the current wiki markup converter. This property 
 		/// is only set when the PageContent object is passed into the constructor, and is empty unless explicitly 
 		/// set by the caller.
-		/// </summary>
+		/// </summary> TODO: remove
 		public string ContentAsHtml { get; set; }
 
 		/// <summary>
@@ -217,7 +217,7 @@ namespace Roadkill.Core.Mvc.ViewModels
 			AllTags = new List<TagViewModel>();
 		}
 
-		public PageViewModel(PageContent pageContent, TextMiddlewareBuilder textMiddlewareBuilder)
+		public PageViewModel(PageContent pageContent, PageHtml pageHtml)
 		{
 			if (pageContent == null)
 				throw new ArgumentNullException(nameof(pageContent));
@@ -225,8 +225,6 @@ namespace Roadkill.Core.Mvc.ViewModels
 			if (pageContent.Page == null)
 				throw new ArgumentNullException("pageContent.Page");
 
-			if (textMiddlewareBuilder == null)
-				throw new ArgumentNullException(nameof(textMiddlewareBuilder));
 
 			Id = pageContent.Page.Id;
 			Title = pageContent.Page.Title;
@@ -240,7 +238,6 @@ namespace Roadkill.Core.Mvc.ViewModels
 			Content = pageContent.Text;
 			VersionNumber = pageContent.VersionNumber;
 
-			PageHtml pageHtml = textMiddlewareBuilder.Execute(pageContent.Text);
 			ContentAsHtml = pageHtml.Html;
 			IsCacheable = pageHtml.IsCacheable;
 			PluginHeadHtml = pageHtml.HeadHtml;

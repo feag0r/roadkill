@@ -162,7 +162,7 @@ namespace Roadkill.Tests.Integration.Configuration
 			// Assert
 			Assert.That(appSettings.AdminRoleName, Is.EqualTo("Admin-test"), "AdminRoleName");
 			Assert.That(appSettings.ApiKeys.Count(), Is.EqualTo(3), "ApiKeys");
-			Assert.That(appSettings.AttachmentsRoutePath, Is.EqualTo("AttachmentsRoutePathTest"), "AttachmentsRoutePath"); 
+			Assert.That(appSettings.AttachmentsRoutePath, Is.EqualTo("The/First/And/Last/Slash/Should/Be/Removed"), "AttachmentsRoutePath"); 
 			Assert.That(appSettings.AttachmentsFolder, Is.EqualTo("/Attachments-test"), "AttachmentsFolder");
 			Assert.That(appSettings.UseObjectCache, Is.True, "UseObjectCache");
 			Assert.That(appSettings.UseBrowserCache, Is.True, "UseBrowserCache");
@@ -191,7 +191,7 @@ namespace Roadkill.Tests.Integration.Configuration
 			ApplicationSettings appSettings = configManager.GetApplicationSettings();
 
 			// Assert
-			Assert.That(appSettings.AttachmentsRoutePath, Is.EqualTo("AttachmentsRoutePathTest"), "AttachmentsRoutePath");
+			Assert.That(appSettings.AttachmentsRoutePath, Is.EqualTo("The/First/And/Last/Slash/Should/Be/Removed"), "AttachmentsRoutePath");
 		}
 
 		[Test]

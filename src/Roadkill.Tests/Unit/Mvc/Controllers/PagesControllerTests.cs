@@ -10,6 +10,7 @@ using Roadkill.Core.Mvc.Controllers;
 using Roadkill.Core.Mvc.ViewModels;
 using Roadkill.Core.Services;
 using Roadkill.Core.Text;
+using Roadkill.Core.Text.Menu;
 using Roadkill.Core.Text.TextMiddleware;
 using Roadkill.Tests.Unit.StubsAndMocks;
 using Roadkill.Tests.Unit.StubsAndMocks.Mvc;
@@ -62,9 +63,10 @@ namespace Roadkill.Tests.Unit.Mvc.Controllers
 			_pageServiceMock.Setup(x => x.GetById(It.IsAny<int>(), true)).Returns<int,bool>((int id, bool loadContent) =>
 			{
 				PageContent content = _pageRepository.GetLatestPageContent(id);
+				PageHtml pagehtml = _textMiddlewareBuilder.Execute(content.Text);
 
 				if (content != null)
-					return new PageViewModel(content, _textMiddlewareBuilder);
+					return new PageViewModel(content, pagehtml);
 				else
 					return null;
 			});
