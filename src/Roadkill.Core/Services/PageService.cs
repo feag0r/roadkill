@@ -342,8 +342,11 @@ namespace Roadkill.Core.Services
 					{
 						PageContent pageContent = PageRepository.GetLatestPageContent(page.Id);
 						PageHtml html = _textMiddlewareBuilder.Execute(pageContent.Text);
+						pageModel = new PageViewModel(pageContent, html);
 
-						return new PageViewModel(pageContent, html);
+						_pageViewModelCache.UpdateHomePage(pageModel);
+
+						return pageModel;
 					}
 				}
 
@@ -456,7 +459,7 @@ namespace Roadkill.Core.Services
 							PageContent pageContent = PageRepository.GetLatestPageContent(page.Id);
 							PageHtml html = _textMiddlewareBuilder.Execute(pageContent.Text);
 
-							return new PageViewModel(pageContent, html);
+							pageModel = new PageViewModel(pageContent, html);
 						}
 						else
 						{
