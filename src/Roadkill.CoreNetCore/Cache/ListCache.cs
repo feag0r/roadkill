@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Caching;
-using System.Text;
-using Mindscape.LightSpeed;
+using Microsoft.Extensions.Caching.Memory;
 using Roadkill.Core.Configuration;
-using Roadkill.Core.Database;
 using Roadkill.Core.Logging;
 
 namespace Roadkill.Core.Cache
@@ -15,18 +11,28 @@ namespace Roadkill.Core.Cache
 	/// </summary>
 	public class ListCache
 	{
-		private readonly ObjectCache _cache; 
 		private readonly ApplicationSettings _applicationSettings;
+		private readonly IMemoryCache _cache;
+		private readonly HashSet<string> _cacheKeys;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ListCache"/> class.
 		/// </summary>
 		/// <param name="settings">The application settings.</param>
 		/// <param name="cache">The underlying OjectCache - a MemoryCache by default.</param>
-		public ListCache(ApplicationSettings settings, ObjectCache cache)
+		public ListCache(ApplicationSettings settings, IMemoryCache cache)
 		{
 			_applicationSettings = settings;
 			_cache = cache;
+			_cacheKeys = new HashSet<string>();
+		}
+
+		private void StoreKey(string key)
+		{
+			if (!_cacheKeys.Contains(key))
+			{
+				_cacheKeys.Add(key);
+			}
 		}
 
 		/// <summary>
@@ -43,8 +49,12 @@ namespace Roadkill.Core.Cache
 			if (!key.StartsWith(CacheKeys.LIST_CACHE_PREFIX))
 				key = CacheKeys.LIST_CACHE_PREFIX + key;
 
+			StoreKey(key);
+
+			ICacheEntry entry = _cache.CreateEntry(key);
+			entry.SetValue(items);
+
 			Log.Information("ListCache: Added {0} to cache", key);
-			_cache.Add(key, items.ToList(), new CacheItemPolicy());
 		}
 
 		/// <summary>
@@ -56,6 +66,7 @@ namespace Roadkill.Core.Cache
 		public List<T> Get<T>(string key)
 		{
 			Log.Information("ListCache: Retrieved {0} from cache", key);
+
 			return _cache.Get(CacheKeys.LIST_CACHE_PREFIX + key) as List<T>;
 		}
 
@@ -70,6 +81,7 @@ namespace Roadkill.Core.Cache
 				return;
 
 			Log.Information("ListCache: Removed {0} from cache", key);
+
 			_cache.Remove(CacheKeys.LIST_CACHE_PREFIX + key);
 		}
 
@@ -97,9 +109,8 @@ namespace Roadkill.Core.Cache
 		/// <returns>A string list of the keys.</returns>
 		public IEnumerable<string> GetAllKeys()
 		{
-			return _cache.Where(x => x.Key.StartsWith(CacheKeys.LIST_CACHE_PREFIX))
-					.OrderBy(x => x.Key)
-					.Select(x => x.Key);
+			return _cacheKeys.Where(x => x.StartsWith(CacheKeys.LIST_CACHE_PREFIX))
+				.OrderBy(x => x);
 		}
 	}
 }

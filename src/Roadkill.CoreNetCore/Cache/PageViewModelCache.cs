@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Caching;
-using System.Text;
+using Microsoft.Extensions.Caching.Memory;
 using Roadkill.Core.Configuration;
-using Roadkill.Core.Logging;
 using Roadkill.Core.Mvc.ViewModels;
 using RoadkillLog = Roadkill.Core.Logging.Log;
 
@@ -20,18 +17,28 @@ namespace Roadkill.Core.Cache
 		/// </summary>
 		internal static readonly int LATEST_VERSION_NUMBER = 0;
 
-		private readonly ObjectCache _cache; 
 		private readonly ApplicationSettings _applicationSettings;
+		private readonly IMemoryCache _cache;
+		private readonly HashSet<string> _cacheKeys;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PageViewModelCache"/> class.
 		/// </summary>
 		/// <param name="settings">The application settings.</param>
 		/// <param name="cache">The underlying OjectCache - a MemoryCache by default.</param>
-		public PageViewModelCache(ApplicationSettings settings, ObjectCache cache)
+		public PageViewModelCache(ApplicationSettings settings, IMemoryCache cache)
 		{
 			_applicationSettings = settings;
 			_cache = cache;
+			_cacheKeys = new HashSet<string>();
+		}
+
+		private void StoreKey(string key)
+		{
+			if (!_cacheKeys.Contains(key))
+			{
+				_cacheKeys.Add(key);
+			}
 		}
 
 		/// <summary>
@@ -59,7 +66,10 @@ namespace Roadkill.Core.Cache
 				return;
 
 			string key = CacheKeys.PageViewModelKey(id, version);
-			_cache.Add(key, item, new CacheItemPolicy());
+			StoreKey(key);
+
+			ICacheEntry entry = _cache.CreateEntry(key);
+			entry.SetValue(item);
 
 			Log("Added key {0} to cache [Id={1}, Version{2}]", key, id, version);
 		}
@@ -73,8 +83,12 @@ namespace Roadkill.Core.Cache
 			if (!_applicationSettings.UseObjectCache)
 				return;
 
-			_cache.Remove(CacheKeys.HomepageKey());
-			_cache.Add(CacheKeys.HomepageKey(), item, new CacheItemPolicy());
+			string key = CacheKeys.HomepageKey();
+			StoreKey(key);
+
+			_cache.Remove(key);
+			ICacheEntry entry = _cache.CreateEntry(key);
+			entry.SetValue(item);
 		}
 
 		/// <summary>
@@ -180,9 +194,8 @@ namespace Roadkill.Core.Cache
 		/// <returns>A string list of the keys.</returns>
 		public IEnumerable<string> GetAllKeys()
 		{
-			return _cache.Where(x => x.Key.StartsWith(CacheKeys.PAGEVIEWMODEL_CACHE_PREFIX))
-				.OrderBy(x => x.Key)
-				.Select(x => x.Key);
+			return _cacheKeys.Where(x => x.StartsWith(CacheKeys.PAGEVIEWMODEL_CACHE_PREFIX))
+				.OrderBy(x => x);
 		}
 
 		private void Log(string format, params object[] args)
