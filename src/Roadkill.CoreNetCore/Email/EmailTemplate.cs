@@ -30,12 +30,12 @@ namespace Roadkill.Core.Email
 		/// <summary>
 		/// The HTML template for the email.
 		/// </summary>
-		public string HtmlView { get; set; }
+		public string HtmlBody { get; set; }
 
 		/// <summary>
 		/// The plain text template for the email.
 		/// </summary>
-		public string PlainTextView { get; set; }
+		public string PlainTextBody { get; set; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="EmailTemplate"/> class.
@@ -68,14 +68,14 @@ namespace Roadkill.Core.Email
 			if (model == null || (string.IsNullOrEmpty(model.ExistingEmail) && string.IsNullOrEmpty(model.NewEmail)))
 				throw new EmailException(null, "The UserViewModel for the email is null or has an empty email");
 
-			if (string.IsNullOrEmpty(PlainTextView))
+			if (string.IsNullOrEmpty(PlainTextBody))
 				throw new EmailException(null, "No plain text view can be found for {0}", GetType().Name);
 
-			if (string.IsNullOrEmpty(HtmlView))
+			if (string.IsNullOrEmpty(HtmlBody))
 				throw new EmailException(null, "No HTML view can be found for {0}", GetType().Name);
 
-			string plainTextContent = ReplaceTokens(model, PlainTextView);
-			string htmlContent = ReplaceTokens(model, HtmlView);
+			string plainTextContent = ReplaceTokens(model, PlainTextBody);
+			string htmlContent = ReplaceTokens(model, HtmlBody);
 
 			string emailTo = model.ExistingEmail;
 			if (string.IsNullOrEmpty(emailTo))
@@ -86,24 +86,22 @@ namespace Roadkill.Core.Email
 
 			// Construct the message and the two views
 			MailMessage message = new MailMessage();
-			message.To.Add(emailTo);
+			message.To = emailTo;
 			message.Subject = "Please confirm your email address";
-			
-			AlternateView plainTextView = AlternateView.CreateAlternateViewFromString(plainTextContent, new ContentType("text/plain"));
-			AlternateView htmlView = AlternateView.CreateAlternateViewFromString(htmlContent, new ContentType("text/html"));
-			message.AlternateViews.Add(htmlView);
-			message.AlternateViews.Add(plainTextView);
+			message.PlainTextBody = plainTextContent;
+			message.HtmlBody = htmlContent;
 
+			// TODO: NETStandard - put this into EmailClient
 			// Add "~" support for pickupdirectories.
-			if (EmailClient.GetDeliveryMethod() == SmtpDeliveryMethod.SpecifiedPickupDirectory && 
-				!string.IsNullOrEmpty(EmailClient.PickupDirectoryLocation) &&
-				EmailClient.PickupDirectoryLocation.StartsWith("~"))
-			{
-				string root = AppDomain.CurrentDomain.BaseDirectory;
-				string pickupRoot = EmailClient.PickupDirectoryLocation.Replace("~/", root);
-				pickupRoot = pickupRoot.Replace("/", @"\");
-				EmailClient.PickupDirectoryLocation = pickupRoot;
-			}
+			//if (EmailClient.GetDeliveryMethod() == SmtpDeliveryMethod.SpecifiedPickupDirectory && 
+			//	!string.IsNullOrEmpty(EmailClient.PickupDirectoryLocation) &&
+			//	EmailClient.PickupDirectoryLocation.StartsWith("~"))
+			//{
+			//	string root = AppDomain.CurrentDomain.BaseDirectory;
+			//	string pickupRoot = EmailClient.PickupDirectoryLocation.Replace("~/", root);
+			//	pickupRoot = pickupRoot.Replace("/", @"\");
+			//	EmailClient.PickupDirectoryLocation = pickupRoot;
+			//}
 
 			EmailClient.Send(message);
 		}
@@ -151,8 +149,9 @@ namespace Roadkill.Core.Email
 			result = result.Replace("{USERID}", model.Id.ToString());
 			result = result.Replace("{SITENAME}", SiteSettings.SiteName);
 
-			if (HttpContext.Current != null)
-				result = result.Replace("{REQUEST_IP}", HttpContext.Current.Request.ServerVariables["REMOTE_ADDR"]);
+			// TODO: NETStandard - add this to the model
+			//if (HttpContext.Current != null)
+			//	result = result.Replace("{REQUEST_IP}", HttpContext.Current.Request.ServerVariables["REMOTE_ADDR"]);
 
 			return result;
 		}

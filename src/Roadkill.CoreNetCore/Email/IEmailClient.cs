@@ -6,7 +6,7 @@
 	public interface IEmailClient
 	{
 		string PickupDirectoryLocation { get; set; }
-		void Send(MailMessage message);
+		void Send(IMailMessage message);
 		SmtpDeliveryMethod GetDeliveryMethod();
 	}
 }

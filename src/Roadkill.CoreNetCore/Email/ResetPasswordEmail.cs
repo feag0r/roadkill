@@ -26,8 +26,8 @@ namespace Roadkill.Core.Email
 			if (string.IsNullOrEmpty(_htmlContent))
 				_htmlContent = ReadTemplateFile("ResetPassword.html");
 
-			PlainTextView = _plainTextContent;
-			HtmlView = _htmlContent;
+			PlainTextBody = _plainTextContent;
+			HtmlBody = _htmlContent;
 
 			base.Send(model);
 		}
