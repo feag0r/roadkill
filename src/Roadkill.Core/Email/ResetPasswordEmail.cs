@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.Web;
-using System.Globalization;
-using Roadkill.Core.Configuration;
+﻿using Roadkill.Core.Configuration;
 using Roadkill.Core.Mvc.ViewModels;
-using Roadkill.Core.Database;
 using Roadkill.Core.Database.Repositories;
 
 namespace Roadkill.Core.Email
