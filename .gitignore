@@ -29,13 +29,10 @@ _ReSharper*/
 *c9revisions/
 
 # Attachments test directory
-[Aa]ttachments/
+App_Data/[Aa]ttachments/
 
 # All lucene index directories
-[Ss]earch/
-
-# The site export folder
-export/
+App_Data/[Ss]earch/
 
 # Chutzpah Javascript test runner files
 *_Chutzpah*.*
@@ -45,7 +42,7 @@ Roadkill_v1.7.zip
 Roadkill.*.zip
 
 # Log files 
-[Ll]ogs/
+App_Data/[Ll]ogs/
 
 # SQL database files for SQL Express
 *ROADKILLASPNET.MDF
