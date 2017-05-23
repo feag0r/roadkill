@@ -1,4 +1,5 @@
 ﻿using System;
+using Roadkill.Core.Configuration;
 
 namespace Roadkill.Core.Database
 {
