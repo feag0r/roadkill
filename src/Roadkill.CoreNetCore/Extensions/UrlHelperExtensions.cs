@@ -1,10 +1,13 @@
 ﻿using System.Text;
+using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Roadkill.Core.Configuration;
 
 namespace Roadkill.Core.Extensions
 {
 	/// <summary>
-	/// Roadkill specific extensions methods for the <see cref="UrlHelper"/> class.
+	/// Roadkill specific extensions methods for the <see cref="IUrlHelper"/> class.
 	/// </summary>
 	public static class UrlHelperExtensions
 	{
@@ -14,7 +17,7 @@ namespace Roadkill.Core.Extensions
 		/// <param name="helper">The helper.</param>
 		/// <param name="relativePath">The filename or path inside the current theme directory.</param>
 		/// <returns>A url path to the item, e.g. '/MySite/Themes/Mediawiki/logo.png'</returns>
-		public static string ThemeContent(this UrlHelper helper, string relativePath, SiteSettings settings)
+		public static string ThemeContent(this IUrlHelper helper, string relativePath, SiteSettings settings)
 		{
 			return helper.Content(settings.ThemePath + "/" + relativePath);
 		}
@@ -23,7 +26,7 @@ namespace Roadkill.Core.Extensions
 		/// Provides a CSS link tag for the CSS file provided. If the relative path does not begin with ~ then
 		/// the Assets/Css folder is assumed.
 		/// </summary>
-		public static MvcHtmlString CssLink(this UrlHelper helper, string relativePath)
+		public static HtmlString CssLink(this IUrlHelper helper, string relativePath)
 		{
 			string path = relativePath;
 
@@ -33,14 +36,14 @@ namespace Roadkill.Core.Extensions
 			path = helper.Content(path);
 			string html = $"<link href=\"{path}?version={ApplicationSettings.ProductVersion}\" rel=\"stylesheet\" type=\"text/css\" />";
 
-			return MvcHtmlString.Create(html);
+			return new HtmlString(html);
 		}
 
 		/// <summary>
 		/// Provides a Javascript script tag for the Javascript file provided. If the relative path does not begin with ~ then
 		/// the Assets/Scripts folder is assumed.
 		/// </summary>
-		public static MvcHtmlString ScriptLink(this UrlHelper helper, string relativePath)
+		public static HtmlString ScriptLink(this IUrlHelper helper, string relativePath)
 		{
 			string path = relativePath;
 
@@ -50,13 +53,13 @@ namespace Roadkill.Core.Extensions
 			path = helper.Content(path);
 			string html = $"<script type=\"text/javascript\" language=\"javascript\" src=\"{path}?version={ApplicationSettings.ProductVersion}\"></script>";
 
-			return MvcHtmlString.Create(html);
+			return new HtmlString(html);
 		}
 
 		/// <summary>
 		/// Provides a Javascript script tag for the installer Javascript file provided, using ~/Assets/Scripts/roadkill/installer as the base path.
 		/// </summary>
-		public static MvcHtmlString InstallerScriptLink(this UrlHelper helper, string filename)
+		public static HtmlString InstallerScriptLink(this IUrlHelper helper, string filename)
 		{
 			return ScriptLink(helper, "~/Assets/Scripts/roadkill/installer/" + filename);
 		}
@@ -64,7 +67,7 @@ namespace Roadkill.Core.Extensions
 		/// <summary>
 		/// Provides a CSS tag for the Bootstrap framework.
 		/// </summary>
-		public static MvcHtmlString BootstrapCSS(this UrlHelper helper)
+		public static HtmlString BootstrapCSS(this IUrlHelper helper)
 		{
 			return CssLink(helper, "~/Assets/bootstrap/css/bootstrap.min.css");
 		}
@@ -72,36 +75,36 @@ namespace Roadkill.Core.Extensions
 		/// <summary>
 		/// Provides a Javascript script tag for the Bootstrap framework.
 		/// </summary>
-		public static MvcHtmlString BootstrapJS(this UrlHelper helper)
+		public static HtmlString BootstrapJS(this IUrlHelper helper)
 		{
-			string html = ScriptLink(helper, "~/Assets/bootstrap/js/bootstrap.min.js").ToHtmlString();
+			string html = ScriptLink(helper, "~/Assets/bootstrap/js/bootstrap.min.js").Value;
 			html += "\n";
 
-			html += ScriptLink(helper, "~/Assets/bootstrap/js/respond.min.js").ToHtmlString();
+			html += ScriptLink(helper, "~/Assets/bootstrap/js/respond.min.js").Value;
 
-			return MvcHtmlString.Create(html);
+			return new HtmlString(html);
 		}
 
 		/// <summary>
 		/// Returns the script link for the JS bundle
 		/// </summary>
-		public static MvcHtmlString JsBundle(this UrlHelper helper)
+		public static HtmlString JsBundle(this IUrlHelper helper)
 		{
 			StringBuilder builder = new StringBuilder();
 
-			builder.AppendLine(ScriptLink(helper, "~/Assets/Scripts/roadkill.min.js").ToHtmlString());
-			builder.AppendLine(ScriptLink(helper, "~/home/globaljsvars").ToHtmlString());
+			builder.AppendLine(ScriptLink(helper, "~/Assets/Scripts/roadkill.min.js").Value);
+			builder.AppendLine(ScriptLink(helper, "~/home/globaljsvars").Value);
 
-			return MvcHtmlString.Create(builder.ToString());
+			return new HtmlString(builder.ToString());
 		}
 
 		/// <summary>
 		/// Returns the script link for the CSS bundle.
 		/// </summary>
-		public static MvcHtmlString CssBundle(this UrlHelper helper)
+		public static HtmlString CssBundle(this IUrlHelper helper)
 		{
-			string html = CssLink(helper, "~/Assets/CSS/roadkill.css").ToHtmlString();
-			return MvcHtmlString.Create(html);
+			string html = CssLink(helper, "~/Assets/CSS/roadkill.css").Value;
+			return new HtmlString(html);
 		}
 	}
 }

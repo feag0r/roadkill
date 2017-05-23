@@ -18,7 +18,7 @@ namespace Roadkill.Core.Extensions
 			if (string.IsNullOrEmpty(text))
 				return "";
 
-			return Convert.ToBase64String(Encoding.Default.GetBytes(text));
+			return Convert.ToBase64String(Encoding.UTF8.GetBytes(text));
 		}
 
 		/// <summary>
@@ -31,7 +31,7 @@ namespace Roadkill.Core.Extensions
 			if (string.IsNullOrEmpty(base64Text))
 				return "";
 			else
-				return Encoding.Default.GetString(Convert.FromBase64String(base64Text));
+				return Encoding.UTF8.GetString(Convert.FromBase64String(base64Text));
 		}
 
 		/// <summary>

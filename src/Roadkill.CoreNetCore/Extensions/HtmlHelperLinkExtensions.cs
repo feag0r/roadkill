@@ -1,11 +1,17 @@
 ﻿using System;
+using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Roadkill.Core.DependencyResolution;
 using ControllerBase = Roadkill.Core.Mvc.Controllers.ControllerBase;
 using Roadkill.Core.Services;
 using Roadkill.Core.Mvc.ViewModels;
+using Roadkill.CoreNetCore.Localization;
 
 namespace Roadkill.Core.Extensions
 {
+	// TODO: NETStandard: replace this with a TagHelper
+
 	/// <summary>
 	/// A set of extension methods for common links throughout the site.
 	/// </summary>
@@ -17,9 +23,9 @@ namespace Roadkill.Core.Extensions
 		/// </summary>
 		/// <returns>"Logged in as {user}" if the user is logged in; "Not logged in" if the user is not logged in.</returns>
 		[Obsolete("You should render the User action using @Html.Action(\"LoggedInAs\", \"User\") instead of this extension")]
-		public static MvcHtmlString LoginStatus(this HtmlHelper helper)
+		public static IHtmlContent LoginStatus(this IHtmlHelper helper)
 		{
-			ControllerBase controller = helper.ViewContext.Controller as ControllerBase;
+			ControllerBase controller = null; // helper.ViewContext.Controller as ControllerBase;
 			if (controller != null && controller.Context.IsLoggedIn)
 			{
 				string text = string.Format("{0} {1}", SiteStrings.Shared_LoggedInAs, controller.Context.CurrentUsername);
@@ -27,7 +33,7 @@ namespace Roadkill.Core.Extensions
 			}
 			else
 			{
-				return MvcHtmlString.Create(SiteStrings.Shared_NotLoggedIn);
+				return new StringHtmlContent(SiteStrings.Shared_NotLoggedIn);
 			}
 		}
 
@@ -35,17 +41,17 @@ namespace Roadkill.Core.Extensions
 		/// Provides a link to the settings page, with optional prefix and suffix tags or seperators.
 		/// </summary>
 		/// <returns>If the user is not logged in and not an admin, an empty string is returned.</returns>
-		public static MvcHtmlString SettingsLink(this HtmlHelper helper, string prefix, string suffix)
+		public static IHtmlContent SettingsLink(this IHtmlHelper helper, string prefix, string suffix)
 		{
-			ControllerBase controller = helper.ViewContext.Controller as ControllerBase;
+			ControllerBase controller = null; // helper.ViewContext.Controller as ControllerBase;
 			if (controller != null && controller.Context.IsAdmin)
 			{
 				string link = helper.ActionLink(SiteStrings.Navigation_SiteSettings, "Index", "Settings").ToString();
-				return MvcHtmlString.Create(prefix + link + suffix);
+				return new StringHtmlContent(prefix + link + suffix);
 			}
 			else
 			{
-				return MvcHtmlString.Empty;
+				return new StringHtmlContent("");
 			}
 		}
 
@@ -53,17 +59,17 @@ namespace Roadkill.Core.Extensions
 		/// Provides a link to the filemanager page, with optional prefix and suffix tags or seperators.
 		/// </summary>
 		/// <returns>If the user is not logged in, an empty string is returned.</returns>
-		public static MvcHtmlString FileManagerLink(this HtmlHelper helper, string prefix, string suffix)
+		public static IHtmlContent FileManagerLink(this IHtmlHelper helper, string prefix, string suffix)
 		{
-			ControllerBase controller = helper.ViewContext.Controller as ControllerBase;
+			ControllerBase controller = null; // helper.ViewContext.Controller as ControllerBase;
 			if (controller != null && (controller.Context.IsLoggedIn && (controller.Context.IsAdmin || controller.Context.IsEditor)))
 			{
 				string link = helper.ActionLink(SiteStrings.FileManager_Title, "Index", "FileManager").ToString();
-				return MvcHtmlString.Create(prefix + link + suffix);
+				return new StringHtmlContent(prefix + link + suffix);
 			}
 			else
 			{
-				return MvcHtmlString.Empty;
+				return new StringHtmlContent("");
 			}
 		}
 
@@ -72,12 +78,12 @@ namespace Roadkill.Core.Extensions
 		/// Optional prefix and suffix tags or seperators and also included.
 		/// </summary>
 		/// <returns>If windows authentication is being used, an empty string is returned.</returns>
-		public static MvcHtmlString LoginLink(this HtmlHelper helper, string prefix, string suffix)
+		public static IHtmlContent LoginLink(this IHtmlHelper helper, string prefix, string suffix)
 		{
-			ControllerBase controller = helper.ViewContext.Controller as ControllerBase;
+			ControllerBase controller = null; // helper.ViewContext.Controller as ControllerBase;
 
 			if (controller == null || controller.ApplicationSettings.UseWindowsAuthentication)
-				return MvcHtmlString.Empty;
+				new StringHtmlContent("");
 
 			string link = "";
 
@@ -94,41 +100,39 @@ namespace Roadkill.Core.Extensions
 					link += "&nbsp;/&nbsp;" + helper.ActionLink(SiteStrings.Navigation_Register, "Signup", "User").ToString();
 			}
 
-			return MvcHtmlString.Create(prefix + link + suffix);
+			return new StringHtmlContent(prefix + link + suffix);
 		}
 
 		/// <summary>
 		/// Provides a link to the "new page" page, with optional prefix and suffix tags or seperators.
 		/// </summary>
 		/// <returns>If the user is not logged in and not an admin, an empty string is returned.</returns>
-		public static MvcHtmlString NewPageLink(this HtmlHelper helper, string prefix, string suffix)
+		public static IHtmlContent NewPageLink(this IHtmlHelper helper, string prefix, string suffix)
 		{
-			ControllerBase controller = helper.ViewContext.Controller as ControllerBase;
+			ControllerBase controller = null; // helper.ViewContext.Controller as ControllerBase;
 
 			if (controller != null && (controller.Context.IsLoggedIn && (controller.Context.IsAdmin || controller.Context.IsEditor)))
 			{
 				string link = helper.ActionLink(SiteStrings.Navigation_NewPage, "New", "Pages").ToString();
-				return MvcHtmlString.Create(prefix + link + suffix);
+				return new StringHtmlContent(prefix + link + suffix);
 			}
-			else
-			{
-				return MvcHtmlString.Empty;
-			}
+
+			return new StringHtmlContent("");
 		}
 
 		/// <summary>
 		/// Provides a link to the index page of the site, with optional prefix and suffix tags or seperators.
 		/// </summary>
-		public static MvcHtmlString MainPageLink(this HtmlHelper helper, string linkText, string prefix, string suffix)
+		public static IHtmlContent MainPageLink(this IHtmlHelper helper, string linkText, string prefix, string suffix)
 		{
-			return MvcHtmlString.Create(prefix + helper.ActionLink(linkText, "Index", "Home") + suffix);
+			return new StringHtmlContent(prefix + helper.ActionLink(linkText, "Index", "Home") + suffix);
 		}
 
 		/// <summary>
 		/// Provides a link to the page with the provided title, querying it in the database first.
 		/// </summary>
 		/// <returns>If the page is not found, the link text is returned.</returns>
-		public static MvcHtmlString PageLink(this HtmlHelper helper, string linkText, string pageTitle)
+		public static IHtmlContent PageLink(this IHtmlHelper helper, string linkText, string pageTitle)
 		{
 			return helper.PageLink(linkText, pageTitle, null, "", "");
 		}
@@ -138,7 +142,7 @@ namespace Roadkill.Core.Extensions
 		/// with optional prefix and suffix tags or seperators.
 		/// </summary>
 		/// <returns>If the page is not found, the link text is returned.</returns>
-		public static MvcHtmlString PageLink(this HtmlHelper helper, string linkText, string pageTitle, string prefix, string suffix)
+		public static IHtmlContent PageLink(this IHtmlHelper helper, string linkText, string pageTitle, string prefix, string suffix)
 		{
 			return helper.PageLink(linkText, pageTitle, null, prefix, suffix);
 		}
@@ -149,20 +153,20 @@ namespace Roadkill.Core.Extensions
 		/// </summary>
 		/// <param name="htmlAttributes">Any additional html attributes to add to the link</param>
 		/// <returns>If the page is not found, the link text is returned.</returns>
-		public static MvcHtmlString PageLink(this HtmlHelper helper, string linkText, string pageTitle, object htmlAttributes, string prefix, string suffix, IPageService pageService = null)
+		public static IHtmlContent PageLink(this IHtmlHelper helper, string linkText, string pageTitle, object htmlAttributes, string prefix, string suffix, IPageService pageService = null)
 		{
 			if (pageService == null)
-				pageService = LocatorStartup.Locator.GetInstance<IPageService>();
+				pageService = LocatorStartup.Locator.Container.GetInstance<IPageService>();
 
 			PageViewModel model = pageService.FindByTitle(pageTitle);
 			if (model != null)
 			{
 				string link = helper.ActionLink(linkText, "Index", "Wiki", new { id = model.Id, title = pageTitle }, htmlAttributes).ToString();
-				return MvcHtmlString.Create(prefix + link + suffix);
+				return new StringHtmlContent(prefix + link + suffix);
 			}
 			else
 			{
-				return MvcHtmlString.Create(linkText);
+				return new StringHtmlContent(linkText);
 			}
 		}
 	}
