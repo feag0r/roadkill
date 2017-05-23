@@ -46,4 +46,34 @@ namespace Roadkill.Core.Configuration
 		/// <returns>An empty string if no error occurred; otherwise the error message.</returns>
 		public abstract string TestSaveWebConfig();
 	}
+
+	public class FullTrustConfigReaderWriter : ConfigReaderWriter
+	{
+		public override void UpdateLanguage(string uiLanguageCode)
+		{
+		}
+
+		public override void Save(SettingsViewModel settings)
+		{
+		}
+
+		public override RoadkillSection Load()
+		{
+			return null;
+		}
+
+		public override ApplicationSettings GetApplicationSettings()
+		{
+			return null;
+		}
+
+		public override void ResetInstalledState()
+		{
+		}
+
+		public override string TestSaveWebConfig()
+		{
+			return null;
+		}
+	}
 }

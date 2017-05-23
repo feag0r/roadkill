@@ -7,9 +7,10 @@ using Roadkill.Core.Logging;
 using Roadkill.Core.Mvc.ViewModels;
 using StructureMap;
 
-[assembly: WebActivatorEx.PreApplicationStartMethod(typeof(LocatorStartup), "StartMVC")]
-[assembly: WebActivatorEx.PostApplicationStartMethod(typeof(LocatorStartup), "AfterInitialization")]
-[assembly: WebActivatorEx.ApplicationShutdownMethod(typeof(LocatorStartup), "End")]
+// TODO: NETStandard - make this into Middleware
+//[assembly: WebActivatorEx.PreApplicationStartMethod(typeof(LocatorStartup), "StartMVC")]
+//[assembly: WebActivatorEx.PostApplicationStartMethod(typeof(LocatorStartup), "AfterInitialization")]
+//[assembly: WebActivatorEx.ApplicationShutdownMethod(typeof(LocatorStartup), "End")]
 
 namespace Roadkill.Core.DependencyResolution
 {
@@ -26,7 +27,8 @@ namespace Roadkill.Core.DependencyResolution
 
 		public static void StartMVC()
 		{
-			StartMVCInternal(new RoadkillRegistry(new FullTrustConfigReaderWriter("")), true);
+			// TODO: NETStandard - change the config loader class
+			StartMVCInternal(new RoadkillRegistry(new FullTrustConfigReaderWriter()), true);
 		}
 
 		internal static void StartMVCInternal(RoadkillRegistry registry, bool isWeb)
@@ -39,37 +41,40 @@ namespace Roadkill.Core.DependencyResolution
 
 			Locator = new StructureMapServiceLocator(container, isWeb);
 
+			// TODO: NETStandard - make this use the new MVC DI
 			// MVC locator
-			DependencyResolver.SetResolver(Locator);
-			DynamicModuleUtility.RegisterModule(typeof(StructureMapHttpModule));
+			//DependencyResolver.SetResolver(Locator);
+			//DynamicModuleUtility.RegisterModule(typeof(StructureMapHttpModule));
 		}
 
 		// Must be run **after** the app has started/initialized via WebActivor
 		public static void AfterInitialization()
 		{
+			// TODO: NETStandard - make this use the new MVC DI
 			// Setup the additional MVC DI stuff
-			var settings = Locator.GetInstance<ApplicationSettings>();
-			AfterInitializationInternal(Locator.Container, settings);
+			//var settings = Locator.GetInstance<ApplicationSettings>();
+			//AfterInitializationInternal(Locator.Container, settings);
 
-			Log.ConfigureLogging(settings);
+			//Log.ConfigureLogging(settings);
 		}
 
 		internal static void AfterInitializationInternal(IContainer container, ApplicationSettings appSettings)
 		{
+			// TODO: NETStandard - make this use the new MVC DI
 			// WebApi: service locator
-			GlobalConfiguration.Configuration.DependencyResolver = Locator;
+			//GlobalConfiguration.Configuration.DependencyResolver = Locator;
 
-			// WebAPI: attributes
-			var webApiProvider = new MvcAttributeProvider(GlobalConfiguration.Configuration.Services.GetFilterProviders(), container);
-			GlobalConfiguration.Configuration.Services.Add(typeof(System.Web.Http.Filters.IFilterProvider), webApiProvider);
+			//// WebAPI: attributes
+			//var webApiProvider = new MvcAttributeProvider(GlobalConfiguration.Configuration.Services.GetFilterProviders(), container);
+			//GlobalConfiguration.Configuration.Services.Add(typeof(System.Web.Http.Filters.IFilterProvider), webApiProvider);
 
-			// MVC: attributes
-			var mvcProvider = new MvcAttributeProvider(container);
-			FilterProviders.Providers.Add(mvcProvider); // attributes
+			//// MVC: attributes
+			//var mvcProvider = new MvcAttributeProvider(container);
+			//FilterProviders.Providers.Add(mvcProvider); // attributes
 
-			// MVC: Models with ModelBinding that require DI
-			ModelBinders.Binders.Add(typeof(UserViewModel), new UserViewModelModelBinder());
-			ModelBinders.Binders.Add(typeof(SettingsViewModel), new SettingsViewModelBinder());
+			//// MVC: Models with ModelBinding that require DI
+			//ModelBinders.Binders.Add(typeof(UserViewModel), new UserViewModelModelBinder());
+			//ModelBinders.Binders.Add(typeof(SettingsViewModel), new SettingsViewModelBinder());
 		}
 
 		public static void End()
