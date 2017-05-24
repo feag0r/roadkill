@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Web.Mvc;
 using Roadkill.Core.Logging;
 using StructureMap;
 
@@ -8,84 +9,86 @@ namespace Roadkill.Core.DependencyResolution.MVC
 	/// <summary>
 	/// The factory for all MVC attributes. This should be marked internal to avoid Structuremap issues.
 	/// </summary>
-	internal class MvcAttributeProvider : FilterAttributeFilterProvider, System.Web.Http.Filters.IFilterProvider
+	internal class MvcAttributeProvider // : FilterAttributeFilterProvider, IFilterProvider
 	{
-		private readonly IContainer _container;
-		private readonly IEnumerable<System.Web.Http.Filters.IFilterProvider> _webApiProviders;
+		// TODO: NETStandard - needs a complete rewrite for MVC 6
 
-		public MvcAttributeProvider(IContainer container)
-		{
-			_container = container;
-		}
+		//private readonly IContainer _container;
+		//private readonly IEnumerable<IFilterProvider> _webApiProviders;
 
-		// For web api
-		public MvcAttributeProvider(IEnumerable<System.Web.Http.Filters.IFilterProvider> providers, IContainer container)
-		{
-			_webApiProviders = providers;
-			_container = container;
-		}
+		//public MvcAttributeProvider(IContainer container)
+		//{
+		//	_container = container;
+		//}
 
-		protected override IEnumerable<FilterAttribute> GetControllerAttributes(ControllerContext controllerContext, ActionDescriptor actionDescriptor)
-		{
-			IEnumerable<FilterAttribute> filters = base.GetControllerAttributes(controllerContext, actionDescriptor);
+		//// For web api
+		//public MvcAttributeProvider(IEnumerable<IFilterProvider> providers, IContainer container)
+		//{
+		//	_webApiProviders = providers;
+		//	_container = container;
+		//}
 
-			foreach (FilterAttribute filter in filters)
-			{
-				_container.BuildUp(filter);
-			}
+		//protected override IEnumerable<FilterAttribute> GetControllerAttributes(ControllerContext controllerContext, ActionDescriptor actionDescriptor)
+		//{
+		//	IEnumerable<FilterAttribute> filters = base.GetControllerAttributes(controllerContext, actionDescriptor);
 
-			return filters;
-		}
+		//	foreach (FilterAttribute filter in filters)
+		//	{
+		//		_container.BuildUp(filter);
+		//	}
 
-		protected override IEnumerable<FilterAttribute> GetActionAttributes(ControllerContext controllerContext, ActionDescriptor actionDescriptor)
-		{
-			IEnumerable<FilterAttribute> filters = base.GetActionAttributes(controllerContext, actionDescriptor);
+		//	return filters;
+		//}
 
-			foreach (FilterAttribute filter in filters)
-			{
-				_container.BuildUp(filter);
-			}
+		//protected override IEnumerable<FilterAttribute> GetActionAttributes(ControllerContext controllerContext, ActionDescriptor actionDescriptor)
+		//{
+		//	IEnumerable<FilterAttribute> filters = base.GetActionAttributes(controllerContext, actionDescriptor);
 
-			return filters;
-		}
+		//	foreach (FilterAttribute filter in filters)
+		//	{
+		//		_container.BuildUp(filter);
+		//	}
 
-		public IEnumerable<Filter> GetFilters(ControllerContext controllerContext, ActionDescriptor actionDescriptor)
-		{
-			IEnumerable<Filter> filters = base.GetFilters(controllerContext, actionDescriptor);
+		//	return filters;
+		//}
 
-			foreach (Filter filter in filters)
-			{
-				// Injects the instance with Structuremap's dependencies
-				Log.Information(filter.Instance.GetType().Name);
-				_container.BuildUp(filter.Instance);
-			}
+		//public IEnumerable<Filter> GetFilters(ControllerContext controllerContext, ActionDescriptor actionDescriptor)
+		//{
+		//	IEnumerable<Filter> filters = base.GetFilters(controllerContext, actionDescriptor);
 
-			return filters;
-		}
+		//	foreach (Filter filter in filters)
+		//	{
+		//		// Injects the instance with Structuremap's dependencies
+		//		Log.Information(filter.Instance.GetType().Name);
+		//		_container.BuildUp(filter.Instance);
+		//	}
 
-		// WebApi
+		//	return filters;
+		//}
 
-		public IEnumerable<System.Web.Http.Filters.FilterInfo> GetFilters(HttpConfiguration configuration, HttpActionDescriptor actionDescriptor)
-		{
-			if (_webApiProviders != null)
-			{
-				IEnumerable<System.Web.Http.Filters.IFilterProvider> filterProviders = _webApiProviders;
-				IEnumerable<System.Web.Http.Filters.FilterInfo> filters = filterProviders.SelectMany(x => x.GetFilters(configuration, actionDescriptor)).ToList();
+		//// WebApi
 
-				foreach (System.Web.Http.Filters.FilterInfo filter in filters)
-				{
-					// Injects the instance with Structuremap's dependencies
-					Log.Information(filter.Instance.GetType().Name);
-					_container.BuildUp(filter.Instance);
-				}
+		//public IEnumerable<FilterInfo> GetFilters(HttpConfiguration configuration, HttpActionDescriptor actionDescriptor)
+		//{
+		//	if (_webApiProviders != null)
+		//	{
+		//		IEnumerable<System.Web.Http.Filters.IFilterProvider> filterProviders = _webApiProviders;
+		//		IEnumerable<System.Web.Http.Filters.FilterInfo> filters = filterProviders.SelectMany(x => x.GetFilters(configuration, actionDescriptor)).ToList();
 
-				return filters;
-			}
-			else
-			{
-				// _webApiProviders will be null for something
-				return null;
-			}
-		}
+		//		foreach (System.Web.Http.Filters.FilterInfo filter in filters)
+		//		{
+		//			// Injects the instance with Structuremap's dependencies
+		//			Log.Information(filter.Instance.GetType().Name);
+		//			_container.BuildUp(filter.Instance);
+		//		}
+
+		//		return filters;
+		//	}
+		//	else
+		//	{
+		//		// _webApiProviders will be null for something
+		//		return null;
+		//	}
+		//}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using Roadkill.Core.Configuration;
+using Roadkill.Core.Security;
 using Roadkill.Core.Services;
 
 namespace Roadkill.Core.DependencyResolution

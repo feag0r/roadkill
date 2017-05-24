@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web.Mvc;
 using Roadkill.Core.Mvc.ViewModels;
 
 namespace Roadkill.Core.DependencyResolution.MVC
@@ -10,7 +11,7 @@ namespace Roadkill.Core.DependencyResolution.MVC
 	{
 		protected override object CreateModel(ControllerContext controllerContext, ModelBindingContext bindingContext, Type modelType)
 		{
-			return LocatorStartup.Locator.GetInstance<UserViewModel>();
+			return LocatorStartup.Container.Container.GetInstance<UserViewModel>();
 		}
 	}
 
@@ -21,7 +22,7 @@ namespace Roadkill.Core.DependencyResolution.MVC
 	{
 		protected override object CreateModel(ControllerContext controllerContext, ModelBindingContext bindingContext, Type modelType)
 		{
-			return LocatorStartup.Locator.GetInstance<SettingsViewModel>();
+			return LocatorStartup.Container.Container.GetInstance<SettingsViewModel>();
 		}
 	}
 }

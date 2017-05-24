@@ -19,7 +19,7 @@ namespace Roadkill.Core.DependencyResolution
 
 	public static class LocatorStartup
 	{
-		public static StructureMapServiceLocator Locator { get; set; }
+		public static IContainer Container { get; set; }
 
 		public static void StartMVC()
 		{
@@ -32,14 +32,14 @@ namespace Roadkill.Core.DependencyResolution
 			IContainer container = new Container(c =>
 			{
 				c.AddRegistry(registry);
-			    c.AddRegistry<TextRegistry>();
+				c.AddRegistry<TextRegistry>();
 			});
 
-			Locator = new StructureMapServiceLocator(container, isWeb);
+			Container = container;
 
 			// TODO: NETStandard - make this use the new MVC DI
 			// MVC locator
-			//DependencyResolver.SetResolver(Locator);
+			//DependencyResolver.SetResolver(Container);
 			//DynamicModuleUtility.RegisterModule(typeof(StructureMapHttpModule));
 		}
 
@@ -48,8 +48,8 @@ namespace Roadkill.Core.DependencyResolution
 		{
 			// TODO: NETStandard - make this use the new MVC DI
 			// Setup the additional MVC DI stuff
-			//var settings = Locator.GetInstance<ApplicationSettings>();
-			//AfterInitializationInternal(Locator.Container, settings);
+			//var settings = Container.GetInstance<ApplicationSettings>();
+			//AfterInitializationInternal(Container.Container, settings);
 
 			//Log.ConfigureLogging(settings);
 		}
@@ -58,7 +58,7 @@ namespace Roadkill.Core.DependencyResolution
 		{
 			// TODO: NETStandard - make this use the new MVC DI
 			// WebApi: service locator
-			//GlobalConfiguration.Configuration.DependencyResolver = Locator;
+			//GlobalConfiguration.Configuration.DependencyResolver = Container;
 
 			//// WebAPI: attributes
 			//var webApiProvider = new MvcAttributeProvider(GlobalConfiguration.Configuration.Services.GetFilterProviders(), container);
@@ -75,7 +75,7 @@ namespace Roadkill.Core.DependencyResolution
 
 		public static void End()
 		{
-			Locator.Dispose();
+			Container.Dispose();
 		}
 	}
 }
