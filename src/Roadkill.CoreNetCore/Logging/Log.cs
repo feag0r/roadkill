@@ -33,16 +33,17 @@ namespace Roadkill.Core.Logging
 			string path = settings.NLogConfigFilePath;
 			path = path.Replace('/', Path.DirectorySeparatorChar);
 
+			// TODO: NETStandard - check this is the right directory
 			if (path.StartsWith("~"))
 			{
-				path = path.Replace("~", AppDomain.CurrentDomain.BaseDirectory);
+				path = path.Replace("~", Directory.GetCurrentDirectory());
 			}
 
 			if (!File.Exists(path))
 			{
 				throw new ConfigurationException(null, "The NLog.config path does not exist: {0}", path);
 			}
-			
+
 			NLogConfigPath = path;
 			LogManager.Configuration = new XmlLoggingConfiguration(NLogConfigPath, true);
 		}
