@@ -15,13 +15,13 @@ namespace Roadkill.Core.Mvc.WebViewPages
 
 		public RoadkillLayoutPage()
 		{
-			ApplicationSettings = LocatorStartup.Locator.GetInstance<ApplicationSettings>();
-			RoadkillContext = LocatorStartup.Locator.GetInstance<IUserContext>();
+			ApplicationSettings = LocatorStartup.Container.GetInstance<ApplicationSettings>();
+			RoadkillContext = LocatorStartup.Container.GetInstance<IUserContext>();
 
 			if (ApplicationSettings.Installed)
 			{
-                TextMiddlewareBuilder = LocatorStartup.Locator.GetInstance<TextMiddlewareBuilder>();
-				SiteSettings = LocatorStartup.Locator.GetInstance<SettingsService>().GetSiteSettings();
+                TextMiddlewareBuilder = LocatorStartup.Container.GetInstance<TextMiddlewareBuilder>();
+				SiteSettings = LocatorStartup.Container.GetInstance<SettingsService>().GetSiteSettings();
 			}
 		}
 	}

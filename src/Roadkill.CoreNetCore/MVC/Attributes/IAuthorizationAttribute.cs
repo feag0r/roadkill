@@ -1,4 +1,6 @@
-﻿namespace Roadkill.Core.Mvc.Attributes
+﻿using Roadkill.Core.Security;
+
+namespace Roadkill.Core.Mvc.Attributes
 {
 	public interface IAuthorizationAttribute
 	{

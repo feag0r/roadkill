@@ -7,6 +7,9 @@ using Roadkill.Core.Mvc.ViewModels;
 using Roadkill.Core.Attachments;
 using Roadkill.Core.DependencyResolution;
 using Roadkill.Core.Extensions;
+using Roadkill.Core.Security;
+using ActionFilterAttribute = Microsoft.AspNetCore.Mvc.Filters.ActionFilterAttribute;
+using ResultExecutedContext = Microsoft.AspNetCore.Mvc.Filters.ResultExecutedContext;
 
 namespace Roadkill.Core.Mvc.Attributes
 {
@@ -72,7 +75,8 @@ namespace Roadkill.Core.Mvc.Attributes
 				{
 					// Update the browser's modified since date, and a 200
 					SetRequiredCacheHeaders(filterContext);
-					filterContext.HttpContext.Response.Cache.SetLastModified(pluginLastSaveDate.ToUniversalTime());
+					// TODO: NETStandard - https://docs.microsoft.com/en-us/aspnet/core/performance/caching/middleware
+					//filterContext.HttpContext.Response.Cache.SetLastModified(pluginLastSaveDate.ToUniversalTime());
 					filterContext.HttpContext.Response.StatusCode = 200;
 
 					return;
@@ -86,34 +90,38 @@ namespace Roadkill.Core.Mvc.Attributes
 				if (pageModifiedDate > pluginLastSaveDate)
 				{
 					// [Yes] - check if the page's last modified date is more recent than the header. If it isn't then a 304 is returned.
-					filterContext.HttpContext.Response.Cache.SetLastModified(pageModifiedDate);
+					// TODO: NETStandard - https://docs.microsoft.com/en-us/aspnet/core/performance/caching/middleware
+					//filterContext.HttpContext.Response.Cache.SetLastModified(pageModifiedDate);
 					filterContext.HttpContext.Response.StatusCode = ResponseWrapper.GetStatusCodeForCache(pageModifiedDate, modifiedSinceHeader);
-
 				}
 				else
 				{
 					// [No]  - check if the plugin's last saved date is more recent than the header. If it isn't then a 304 is returned.
-					filterContext.HttpContext.Response.Cache.SetLastModified(pluginLastSaveDate.ToUniversalTime());
+					// TODO: NETStandard - https://docs.microsoft.com/en-us/aspnet/core/performance/caching/middleware
+					//filterContext.HttpContext.Response.Cache.SetLastModified(pluginLastSaveDate.ToUniversalTime());
 					filterContext.HttpContext.Response.StatusCode = ResponseWrapper.GetStatusCodeForCache(pluginLastSaveDate, modifiedSinceHeader);
 				}
 
 				SetRequiredCacheHeaders(filterContext);
 
-				// Lastly, if the status code is 304 then return an empty body (HttpStatusCodeResult 304), or the 
+				// Lastly, if the status code is 304 then return an empty body (HttpStatusCodeResult 304), or the
 				// browser will try to read the entire response body again.
 				if (filterContext.HttpContext.Response.StatusCode == 304)
 				{
-					filterContext.Result = new HttpStatusCodeResult(304, "Not Modified");
+					// TODO: NETStandard - https://docs.microsoft.com/en-us/aspnet/core/performance/caching/middleware
+					//filterContext.Result = new HttpStatusCodeResult(304, "Not Modified");
 				}
 			}
 		}
 
 		private void SetRequiredCacheHeaders(ResultExecutedContext filterContext)
 		{
+			// TODO: NETStandard - https://docs.microsoft.com/en-us/aspnet/core/performance/caching/middleware
+
 			// These cache headers are required for the last modified header to be understood by the browser
-			filterContext.HttpContext.Response.Cache.SetCacheability(HttpCacheability.Public);
-			filterContext.HttpContext.Response.Cache.SetExpires(DateTime.UtcNow.AddSeconds(2));
-			filterContext.HttpContext.Response.Cache.SetMaxAge(TimeSpan.FromSeconds(0));
+			//filterContext.HttpContext.Response.Cache.SetCacheability(HttpCacheability.Public);
+			//filterContext.HttpContext.Response.Cache.SetExpires(DateTime.UtcNow.AddSeconds(2));
+			//filterContext.HttpContext.Response.Cache.SetMaxAge(TimeSpan.FromSeconds(0));
 		}
 	}
 }

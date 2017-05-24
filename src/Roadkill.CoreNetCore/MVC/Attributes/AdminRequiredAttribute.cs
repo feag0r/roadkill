@@ -1,8 +1,10 @@
 ﻿using System.Security.Principal;
+using Microsoft.AspNetCore.Authorization;
 using Roadkill.Core.Configuration;
 using Roadkill.Core.Services;
 using StructureMap.Attributes;
 using Roadkill.Core.DependencyResolution;
+using Roadkill.Core.Security;
 
 namespace Roadkill.Core.Mvc.Attributes
 {

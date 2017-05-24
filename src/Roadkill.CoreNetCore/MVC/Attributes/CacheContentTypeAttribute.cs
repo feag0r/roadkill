@@ -1,4 +1,6 @@
-﻿namespace Roadkill.Core.Mvc.Attributes
+﻿using System.Web.Mvc;
+
+namespace Roadkill.Core.Mvc.Attributes
 {
 	/// <summary>
 	/// Over-rides the OutputCache so it doesn't force text/html

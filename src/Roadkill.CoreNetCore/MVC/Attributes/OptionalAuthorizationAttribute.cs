@@ -1,13 +1,14 @@
-﻿using System.Security.Principal;
+﻿using Microsoft.AspNetCore.Authorization;
 using Roadkill.Core.Configuration;
 using Roadkill.Core.DependencyResolution;
+using Roadkill.Core.Security;
 using Roadkill.Core.Services;
 using StructureMap.Attributes;
 
 namespace Roadkill.Core.Mvc.Attributes
 {
 	/// <summary>
-	/// Describes a page that doesn't require a login to view, unless Roadkill has IsPublicSite=false. 
+	/// Describes a page that doesn't require a login to view, unless Roadkill has IsPublicSite=false.
 	/// </summary>
 	public class OptionalAuthorizationAttribute : AuthorizeAttribute, ISetterInjected
 	{
@@ -29,6 +30,8 @@ namespace Roadkill.Core.Mvc.Attributes
 		[SetterProperty]
 		public IAuthorizationProvider AuthorizationProvider { get; set; }
 
+		// TODO: NETStandard - this has changed - use middleware?
+
 		/// <summary>
 		/// Provides an entry point for custom authorization checks.
 		/// </summary>
@@ -37,28 +40,28 @@ namespace Roadkill.Core.Mvc.Attributes
 		/// false if the user is an admin or editor AND the site is private (ispublicsite=false). Otherwise true is returned.
 		/// </returns>
 		/// <exception cref="T:System.ArgumentNullException">The <paramref name="httpContext"/> parameter is null.</exception>
-		protected override bool AuthorizeCore(HttpContextBase httpContext)
-		{
-			if (AuthorizationProvider == null)
-				throw new SecurityException("The OptionalAuthorizationAttribute property has not been set for AdminRequiredAttribute. Has it been injected by the DI?", null);
+		//protected override bool AuthorizeCore(HttpContext httpContext)
+		//{
+		//	if (AuthorizationProvider == null)
+		//		throw new SecurityException("The OptionalAuthorizationAttribute property has not been set for AdminRequiredAttribute. Has it been injected by the DI?", null);
 
-			if (!ApplicationSettings.Installed)
-			{
-				return true;
-			}
+		//	if (!ApplicationSettings.Installed)
+		//	{
+		//		return true;
+		//	}
 
-			// If the site is private then check for a login
-			if (!ApplicationSettings.IsPublicSite)
-			{
-				IPrincipal principal = httpContext.User;
+		//	// If the site is private then check for a login
+		//	if (!ApplicationSettings.IsPublicSite)
+		//	{
+		//		IPrincipal principal = httpContext.User;
 
-				AuthorizationProvider provider = new AuthorizationProvider(ApplicationSettings, UserService);
-				return provider.IsAdmin(principal) || provider.IsEditor(principal);
-			}
-			else
-			{
-				return true;
-			}
-		}
+		//		AuthorizationProvider provider = new AuthorizationProvider(ApplicationSettings, UserService);
+		//		return provider.IsAdmin(principal) || provider.IsEditor(principal);
+		//	}
+		//	else
+		//	{
+		//		return true;
+		//	}
+		//}
 	}
 }

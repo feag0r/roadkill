@@ -21,7 +21,7 @@ namespace Roadkill.Core.Services
 		public InstallationService()
 		{
 			_getRepositoryFunc = GetRepository;
-			Locator = LocatorStartup.Locator;
+			Locator = LocatorStartup.Container;
 		}
 
 		internal InstallationService(Func<string, string, IInstallerRepository> getRepositoryFunc, ServiceLocatorImplBase locator)

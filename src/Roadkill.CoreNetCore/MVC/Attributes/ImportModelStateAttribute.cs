@@ -1,4 +1,6 @@
-﻿namespace Roadkill.Core.Mvc.Attributes
+﻿using Microsoft.AspNetCore.Mvc.Filters;
+
+namespace Roadkill.Core.Mvc.Attributes
 {
 	/// <summary>
 	/// Represents an attribute that is used to import a ModelState from an action that has performed a RedirectToAction().
@@ -10,24 +12,25 @@
 
 		public override void OnActionExecuted(ActionExecutedContext filterContext)
 		{
+			// TODO: NETStandard - figure out how to transfer the model between actions
 			// Based on: http://weblogs.asp.net/rashid/archive/2009/04/01/asp-net-mvc-best-practices-part-1.aspx#prg
-			ModelStateDictionary modelState = filterContext.Controller.TempData[_key] as ModelStateDictionary;
+			//ModelStateDictionary modelState = filterContext.Controller.TempData[_key] as ModelStateDictionary;
 
-			if (modelState != null)
-			{
-				// Only Import if we are viewing
-				if (filterContext.Result is ViewResult)
-				{
-					filterContext.Controller.ViewData.ModelState.Merge(modelState);
-				}
-				else
-				{
-					// Otherwise remove it.
-					filterContext.Controller.TempData.Remove(_key);
-				}
-			}
+			//if (modelState != null)
+			//{
+			//	// Only Import if we are viewing
+			//	if (filterContext.Result is ViewResult)
+			//	{
+			//		filterContext.Controller.ViewData.ModelState.Merge(modelState);
+			//	}
+			//	else
+			//	{
+			//		// Otherwise remove it.
+			//		filterContext.Controller.TempData.Remove(_key);
+			//	}
+			//}
 
-			base.OnActionExecuted(filterContext);
+			//base.OnActionExecuted(filterContext);
 		}
 	}
 }

@@ -1,8 +1,9 @@
-﻿using System.Security.Principal;
+﻿using Microsoft.AspNetCore.Authorization;
 using Roadkill.Core.Configuration;
 using Roadkill.Core.Services;
 using StructureMap.Attributes;
 using Roadkill.Core.DependencyResolution;
+using Roadkill.Core.Security;
 
 namespace Roadkill.Core.Mvc.Attributes
 {
@@ -29,6 +30,8 @@ namespace Roadkill.Core.Mvc.Attributes
 		[SetterProperty]
 		public IAuthorizationProvider AuthorizationProvider { get; set; }
 
+		// TODO: NETStandard - figure out how this now works
+
 		/// <summary>
 		/// Provides an entry point for custom authorization checks.
 		/// </summary>
@@ -37,13 +40,13 @@ namespace Roadkill.Core.Mvc.Attributes
 		/// true if the user is an editor, in the role name specified by the roadkill web.config editorRoleName setting or if this is blank; otherwise, false.
 		/// </returns>
 		/// <exception cref="T:System.ArgumentNullException">The <paramref name="httpContext"/> parameter is null.</exception>
-		protected override bool AuthorizeCore(HttpContextBase httpContext)
-		{
-			if (AuthorizationProvider == null)
-				throw new SecurityException("The AuthorizationProvider property has not been set for EditorRequiredAttribute.", null);
+		//protected override bool AuthorizeCore(HttpContext httpContext)
+		//{
+		//	if (AuthorizationProvider == null)
+		//		throw new SecurityException("The AuthorizationProvider property has not been set for EditorRequiredAttribute.", null);
 
-			IPrincipal principal = httpContext.User;
-			return AuthorizationProvider.IsEditor(principal);
-		}
+		//	IPrincipal principal = httpContext.User;
+		//	return AuthorizationProvider.IsEditor(principal);
+		//}
 	}
 }
