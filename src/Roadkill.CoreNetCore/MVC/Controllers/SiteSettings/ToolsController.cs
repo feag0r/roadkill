@@ -1,12 +1,16 @@
 ﻿using System;
 using System.IO;
+using Microsoft.AspNetCore.Mvc;
+using Roadkill.Core.Cache;
 using Roadkill.Core.Configuration;
 using Roadkill.Core.Domain.Export;
 using Roadkill.Core.Import;
 using Roadkill.Core.Logging;
 using Roadkill.Core.Mvc.Attributes;
 using Roadkill.Core.Plugins;
+using Roadkill.Core.Security;
 using Roadkill.Core.Services;
+using Roadkill.CoreNetCore.Localization;
 
 namespace Roadkill.Core.Mvc.Controllers
 {
@@ -27,13 +31,13 @@ namespace Roadkill.Core.Mvc.Controllers
 		public ToolsController(ApplicationSettings settings, UserServiceBase userManager,
 			SettingsService settingsService, PageService pageService, SearchService searchService, IUserContext context,
 			ListCache listCache, PageViewModelCache pageViewModelCache, IWikiImporter wikiImporter, IPluginFactory pluginFactory, WikiExporter wikiExporter)
-			: base(settings, userManager, context, settingsService) 
+			: base(settings, userManager, context, settingsService)
 		{
 			_pageService = pageService;
 			_searchService = searchService;
 			_listCache = listCache;
 			_pageViewModelCache = pageViewModelCache;
-			_wikiImporter = wikiImporter;			
+			_wikiImporter = wikiImporter;
 			_wikiExporter = wikiExporter;
 		}
 
@@ -161,7 +165,7 @@ namespace Roadkill.Core.Mvc.Controllers
 				_wikiImporter.UpdateSearchIndex(_searchService);
 				TempData["SuccessMessage"] = SiteStrings.SiteSettings_Tools_ScrewTurnImport_Message;
 			}
-			
+
 			return RedirectToAction("Index");
 		}
 

@@ -1,8 +1,10 @@
-﻿using Roadkill.Core.Cache;
+﻿using Microsoft.AspNetCore.Mvc;
+using Roadkill.Core.Cache;
 using Roadkill.Core.Configuration;
 using Roadkill.Core.Mvc.Attributes;
 using Roadkill.Core.Mvc.ViewModels;
 using Roadkill.Core.Plugins;
+using Roadkill.Core.Security;
 using Roadkill.Core.Services;
 
 namespace Roadkill.Core.Mvc.Controllers
@@ -14,15 +16,15 @@ namespace Roadkill.Core.Mvc.Controllers
 	[AdminRequired]
 	public class CacheController : ControllerBase
 	{
-		private ListCache _listCache;
-		private PageViewModelCache _pageViewModelCache;
-		private SiteCache _siteCache;
+		private readonly ListCache _listCache;
+		private readonly PageViewModelCache _pageViewModelCache;
+		private readonly SiteCache _siteCache;
 		private IPluginFactory _pluginFactory;
 
 		public CacheController(ApplicationSettings settings, UserServiceBase userService,
 			SettingsService settingsService, IUserContext context,
 			ListCache listCache, PageViewModelCache pageViewModelCache, SiteCache siteCache)
-			: base(settings, userService, context, settingsService) 
+			: base(settings, userService, context, settingsService)
 		{
 			_listCache = listCache;
 			_pageViewModelCache = pageViewModelCache;
@@ -41,7 +43,7 @@ namespace Roadkill.Core.Mvc.Controllers
 				IsCacheEnabled = ApplicationSettings.UseObjectCache,
 				PageKeys = _pageViewModelCache.GetAllKeys(),
 				ListKeys = _listCache.GetAllKeys(),
-				SiteKeys = _siteCache.GetAllKeys()
+				SiteKeys = _siteCache.GetAllPageKeys()
 			};
 
 			return View(viewModel);

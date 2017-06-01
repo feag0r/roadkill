@@ -2,6 +2,8 @@
 using Roadkill.Core.Services;
 using Roadkill.Core.Mvc.ViewModels;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using Roadkill.Core.Security;
 using Roadkill.Core.Text.CustomTokens;
 
 namespace Roadkill.Core.Mvc.Controllers
@@ -15,7 +17,7 @@ namespace Roadkill.Core.Mvc.Controllers
 		private PageService _pageService;
 
 		public HelpController(ApplicationSettings settings, UserServiceBase userManager, IUserContext context, SettingsService settingsService, PageService pageService)
-			: base(settings, userManager, context, settingsService) 
+			: base(settings, userManager, context, settingsService)
 		{
 			_customTokenParser = new CustomTokenParser(settings);
 			_pageService = pageService;

@@ -1,8 +1,12 @@
 ﻿using System;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Roadkill.Core.Attachments;
 using Roadkill.Core.Configuration;
 using Roadkill.Core.Database;
 using Roadkill.Core.Mvc.ViewModels;
+using Roadkill.Core.Security;
+using Roadkill.Core.Security.Windows;
 
 namespace Roadkill.Core.Mvc.Controllers
 {
@@ -19,8 +23,8 @@ namespace Roadkill.Core.Mvc.Controllers
 		private readonly UserServiceBase _userService;
 		private readonly IDatabaseTester _databaseTester;
 
-		public ConfigurationTesterController(ApplicationSettings appSettings, IUserContext userContext, ConfigReaderWriter configReaderWriter, 
-			IActiveDirectoryProvider activeDirectoryProvider, UserServiceBase userService, IDatabaseTester databaseTester) 
+		public ConfigurationTesterController(ApplicationSettings appSettings, IUserContext userContext, ConfigReaderWriter configReaderWriter,
+			IActiveDirectoryProvider activeDirectoryProvider, UserServiceBase userService, IDatabaseTester databaseTester)
 		{
 			_applicationSettings = appSettings;
 			_userContext = userContext;
@@ -30,9 +34,10 @@ namespace Roadkill.Core.Mvc.Controllers
 			_databaseTester = databaseTester;
 		}
 
-		protected override void OnActionExecuting(ActionExecutingContext filterContext)
+		public override void OnActionExecuting(ActionExecutingContext filterContext)
 		{
-			_userContext.CurrentUser = _userService.GetLoggedInUserName(HttpContext);
+			// TODO: NETStandard - find HttpContext replacement or use a name
+			//_userContext.CurrentUser = _userService.GetLoggedInUserName(HttpContext);
 			ViewBag.Context = _userContext;
 			ViewBag.Config = _applicationSettings;
 		}
@@ -48,7 +53,7 @@ namespace Roadkill.Core.Mvc.Controllers
 				return Content("");
 
 			string errors = _activeDirectoryProvider.TestLdapConnection(connectionString, username, password, groupName);
-			return Json(new TestResult(errors), JsonRequestBehavior.AllowGet);
+			return Json(new TestResult(errors));
 		}
 
 		/// <summary>
@@ -61,7 +66,7 @@ namespace Roadkill.Core.Mvc.Controllers
 				return Content("");
 
 			string errors = _configReaderWriter.TestSaveWebConfig();
-			return Json(new TestResult(errors), JsonRequestBehavior.AllowGet);
+			return Json(new TestResult(errors));
 		}
 
 		/// <summary>
@@ -75,7 +80,7 @@ namespace Roadkill.Core.Mvc.Controllers
 				return Content("");
 
 			string errors = AttachmentPathUtil.AttachmentFolderExistsAndWriteable(folder, HttpContext);
-			return Json(new TestResult(errors), JsonRequestBehavior.AllowGet);
+			return Json(new TestResult(errors));
 		}
 
 		/// <summary>
@@ -97,7 +102,7 @@ namespace Roadkill.Core.Mvc.Controllers
 				errors = e.ToString();
 			}
 
-			return Json(new TestResult(errors), JsonRequestBehavior.AllowGet);
+			return Json(new TestResult(errors));
 		}
 
 		internal bool IsInstalledAndUserIsNotAdmin()

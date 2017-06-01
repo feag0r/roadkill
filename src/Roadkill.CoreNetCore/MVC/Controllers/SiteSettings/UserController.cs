@@ -1,10 +1,14 @@
 ﻿using System;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 using Roadkill.Core.Configuration;
 using RoadkillUser = Roadkill.Core.Database.User;
 using Roadkill.Core.Services;
 using Roadkill.Core.Mvc.ViewModels;
 using Roadkill.Core.Mvc.Attributes;
 using Roadkill.Core.Email;
+using Roadkill.Core.Security;
+using Roadkill.CoreNetCore.Localization;
 
 namespace Roadkill.Core.Mvc.Controllers
 {
@@ -15,11 +19,11 @@ namespace Roadkill.Core.Mvc.Controllers
 	{
 		private SignupEmail _signupEmail;
 		private ResetPasswordEmail _resetPasswordEmail;
-		
+
 		public UserController(ApplicationSettings settings, UserServiceBase userManager,
-			IUserContext context, SettingsService settingsService, 
+			IUserContext context, SettingsService settingsService,
 			SignupEmail signupEmail, ResetPasswordEmail resetPasswordEmail)
-			: base(settings, userManager, context, settingsService) 
+			: base(settings, userManager, context, settingsService)
 		{
 			_signupEmail = signupEmail;
 			_resetPasswordEmail = resetPasswordEmail;
@@ -54,7 +58,7 @@ namespace Roadkill.Core.Mvc.Controllers
 				return RedirectToAction("Index", "Home");
 
 			RoadkillUser user = UserService.GetUserByResetKey(id);
-			
+
 			if (user == null)
 			{
 				return View("CompleteResetPasswordInvalid");
@@ -109,12 +113,17 @@ namespace Roadkill.Core.Mvc.Controllers
 				return RedirectToAction("Index", "Home");
 
 			// Show a plain login page if the session has ended inside the file explorer/help dialogs
-			if (Request.QueryString["ReturnUrl"] != null)
+			if (Request.Query.ContainsKey("ReturnUrl"))
 			{
-				if (Request.QueryString["ReturnUrl"].ToLower().Contains("/filemanager/select") ||
-					Request.QueryString["ReturnUrl"].ToLower().Contains("/help"))
+				StringValues values;
+				if (Request.Query.TryGetValue("ReturnUrl", out values))
 				{
-					return View("BlankLogin");
+					string firstValue = values[0].ToLower();
+
+					if (firstValue.Contains("/filemanager/select") || firstValue.Contains("/help"))
+					{
+						return View("BlankLogin");
+					}
 				}
 			}
 
@@ -134,23 +143,29 @@ namespace Roadkill.Core.Mvc.Controllers
 			string viewName = "Login";
 
 			// Show a plain login page if the session has ended inside the file explorer/help dialogs
-			if (Request.QueryString["ReturnUrl"] != null)
+			if (Request.Query.ContainsKey("ReturnUrl"))
 			{
-				if (Request.QueryString["ReturnUrl"].ToLower().Contains("/filemanager/select") ||
-					Request.QueryString["ReturnUrl"].ToLower().Contains("/help"))
+				StringValues values;
+				if (Request.Query.TryGetValue("ReturnUrl", out values))
 				{
-					viewName = "BlankLogin";
+					string firstValue = values[0].ToLower();
+
+					if (firstValue.Contains("/filemanager/select") || firstValue.Contains("/help"))
+					{
+						viewName = "BlankLogin";
+					}
 				}
 			}
 
 			if (UserService.Authenticate(email, password))
 			{
-				Context.CurrentUser = UserService.GetLoggedInUserName(HttpContext);
+				// TODO: NETStandard - find out how to use HttpContext
+				//Context.CurrentUser = UserService.GetLoggedInUserName(Request.HttpContext);
 
 				if (!string.IsNullOrWhiteSpace(fromUrl))
 					return Redirect(fromUrl);
 				else
-					return RedirectToAction("Index","Home");
+					return RedirectToAction("Index", "Home");
 			}
 			else
 			{
@@ -207,7 +222,7 @@ namespace Roadkill.Core.Mvc.Controllers
 			// Don't allow the logged in user to change someone else's email - throw 403
 			// so that it's logged in the server logs.
 			if (model.Id.ToString() != Context.CurrentUser)
-				return new HttpStatusCodeResult(403, "You cannot change the profile of another user");
+				return new StatusCodeResult(403);
 
 			if (ApplicationSettings.IsDemoSite)
 			{
@@ -293,7 +308,7 @@ namespace Roadkill.Core.Mvc.Controllers
 						Configuration.SiteSettings siteSettings = SettingsService.GetSiteSettings();
 						_resetPasswordEmail.Send(new UserViewModel(user));
 
-						return View("ResetPasswordSent",(object) email);
+						return View("ResetPasswordSent", (object)email);
 					}
 					else
 					{
@@ -303,7 +318,7 @@ namespace Roadkill.Core.Mvc.Controllers
 			}
 
 			return View();
-		}	
+		}
 
 		/// <summary>
 		/// Resends a signup confirmation email, from the signupcomplete page.
@@ -337,7 +352,7 @@ namespace Roadkill.Core.Mvc.Controllers
 			Configuration.SiteSettings siteSettings = SettingsService.GetSiteSettings();
 			if (Context.IsLoggedIn || !siteSettings.AllowUserSignup || ApplicationSettings.UseWindowsAuthentication)
 			{
-				return RedirectToAction("Index","Home");
+				return RedirectToAction("Index", "Home");
 			}
 			else
 			{
@@ -354,7 +369,7 @@ namespace Roadkill.Core.Mvc.Controllers
 		{
 			Configuration.SiteSettings siteSettings = SettingsService.GetSiteSettings();
 			if (Context.IsLoggedIn || !siteSettings.AllowUserSignup || ApplicationSettings.UseWindowsAuthentication)
-				return RedirectToAction("Index","Home");
+				return RedirectToAction("Index", "Home");
 
 			if (ModelState.IsValid)
 			{

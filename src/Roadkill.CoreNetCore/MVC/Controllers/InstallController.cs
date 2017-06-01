@@ -4,9 +4,9 @@ using Roadkill.Core.Database;
 using Roadkill.Core.Services;
 using Roadkill.Core.Mvc.ViewModels;
 using System.Collections.Generic;
-using System.Threading;
-using System.Globalization;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using Roadkill.Core.Security;
 
 namespace Roadkill.Core.Mvc.Controllers
 {
@@ -28,7 +28,7 @@ namespace Roadkill.Core.Mvc.Controllers
 		public SettingsService SettingsService { get; private set; }
 
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/// <param name="applicationSettings">Use solely to detect whether Roadkill is already installed.</param>
 		public InstallController(ApplicationSettings applicationSettings, ConfigReaderWriter configReaderWriter, IInstallationService installationService, IDatabaseTester databaseTester)
@@ -45,11 +45,12 @@ namespace Roadkill.Core.Mvc.Controllers
 			UserService = null;
 		}
 
-		protected override void OnActionExecuting(ActionExecutingContext filterContext)
-		{
-			if (ApplicationSettings.Installed)
-				filterContext.Result = new RedirectResult(this.Url.Action("Index", "Home"));
-		}
+		// TODO: NETStandard - replace this with middleware
+		//protected override void OnActionExecuting(ActionExecutingContext filterContext)
+		//{
+		//	if (ApplicationSettings.Installed)
+		//		filterContext.Result = new RedirectResult(this.Url.Action("Index", "Home"));
+		//}
 
 		/// <summary>
 		/// Installs Roadkill with default settings and the provided datastory type and connection string.
@@ -89,7 +90,8 @@ namespace Roadkill.Core.Mvc.Controllers
 		/// </summary>
 		public ActionResult Index()
 		{
-			Thread.CurrentThread.CurrentUICulture = new CultureInfo("en");
+			// TODO: NETStandard - see this https://docs.microsoft.com/en-us/aspnet/core/fundamentals/localization
+			//Thread.CurrentThread.CurrentUICulture = new CultureInfo("en");
 
 			return View("Index", LanguageViewModel.SupportedLocales());
 		}
@@ -99,7 +101,8 @@ namespace Roadkill.Core.Mvc.Controllers
 		/// </summary>
 		public ActionResult Step1(string language)
 		{
-			Thread.CurrentThread.CurrentUICulture = new CultureInfo(language);
+			// TODO: NETStandard - see this https://docs.microsoft.com/en-us/aspnet/core/fundamentals/localization
+			//Thread.CurrentThread.CurrentUICulture = new CultureInfo(language);
 			LanguageViewModel languageModel = LanguageViewModel.SupportedLocales().First(x => x.Code == language);
 
 			return View(languageModel);
@@ -113,7 +116,8 @@ namespace Roadkill.Core.Mvc.Controllers
 			// Persist the language change now that we know the web.config can be written to.
 			if (!string.IsNullOrEmpty(language))
 			{
-				Thread.CurrentThread.CurrentUICulture = new CultureInfo(language);
+				// TODO: NETStandard - see this https://docs.microsoft.com/en-us/aspnet/core/fundamentals/localization
+				//Thread.CurrentThread.CurrentUICulture = new CultureInfo(language);
 				_configReaderWriter.UpdateLanguage(language);
 			}
 
@@ -151,7 +155,7 @@ namespace Roadkill.Core.Mvc.Controllers
 			if (model.UseWindowsAuth)
 				return View("Step3WindowsAuth", model);
 			else
-				return View("Step3Database",model);
+				return View("Step3Database", model);
 		}
 
 		/// <summary>
@@ -176,7 +180,6 @@ namespace Roadkill.Core.Mvc.Controllers
 		/// </summary>
 		/// <returns>The Step5 view is displayed.</returns>
 		[HttpPost]
-		[ValidateInput(false)]
 		public ActionResult Step5(SettingsViewModel model)
 		{
 			try

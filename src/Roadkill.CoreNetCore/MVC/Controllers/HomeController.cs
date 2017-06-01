@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Roadkill.Core.Configuration;
 using Roadkill.Core.Services;
 using Roadkill.Core.Mvc.Attributes;
 using Roadkill.Core.Mvc.ViewModels;
+using Roadkill.Core.Security;
 using Roadkill.Core.Text.TextMiddleware;
+using Roadkill.CoreNetCore.Localization;
 
 namespace Roadkill.Core.Mvc.Controllers
 {
@@ -17,15 +21,15 @@ namespace Roadkill.Core.Mvc.Controllers
 	{
 		public IPageService PageService { get; private set; }
 		private SearchService _searchService;
-	    private readonly TextMiddlewareBuilder _textMiddlewareBuilder;
+		private readonly TextMiddlewareBuilder _textMiddlewareBuilder;
 
-	    public HomeController(ApplicationSettings settings, UserServiceBase userManager,IPageService pageService, 
-            SearchService searchService, IUserContext context, SettingsService settingsService, TextMiddlewareBuilder textMiddlewareBuilder)
-			: base(settings, userManager, context, settingsService) 
+		public HomeController(ApplicationSettings settings, UserServiceBase userManager, IPageService pageService,
+			SearchService searchService, IUserContext context, SettingsService settingsService, TextMiddlewareBuilder textMiddlewareBuilder)
+			: base(settings, userManager, context, settingsService)
 		{
 			_searchService = searchService;
-	        _textMiddlewareBuilder = textMiddlewareBuilder;
-	        PageService = pageService;
+			_textMiddlewareBuilder = textMiddlewareBuilder;
+			PageService = pageService;
 		}
 
 		/// <summary>
@@ -69,7 +73,9 @@ namespace Roadkill.Core.Mvc.Controllers
 		/// Returns Javascript 'constants' for the site.
 		/// </summary>
 		/// <param name="version">This is sent by the views to ensure new versions of Roadkill have this JS file cleared from the cache.</param>
-		[CacheContentType(Duration = 86400 * 30, ContentType = "application/javascript")] // 30 days
+
+		// TODO: NETStandard - find a way of caching
+		//[CacheContentType(Duration = 86400 * 30, ContentType = "application/javascript")] // 30 days
 		[AllowAnonymous]
 		public ActionResult GlobalJsVars(string version)
 		{

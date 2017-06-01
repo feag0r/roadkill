@@ -1,7 +1,9 @@
-﻿using Roadkill.Core.Cache;
+﻿using Microsoft.AspNetCore.Mvc;
+using Roadkill.Core.Cache;
 using Roadkill.Core.Configuration;
 using Roadkill.Core.Mvc.Attributes;
 using Roadkill.Core.Mvc.ViewModels;
+using Roadkill.Core.Security;
 using Roadkill.Core.Services;
 
 namespace Roadkill.Core.Mvc.Controllers
@@ -17,9 +19,9 @@ namespace Roadkill.Core.Mvc.Controllers
 		private SiteCache _siteCache;
 		private ConfigReaderWriter _configReaderWriter;
 
-		public SettingsController(ApplicationSettings settings, UserServiceBase userManager, SettingsService settingsService, 
+		public SettingsController(ApplicationSettings settings, UserServiceBase userManager, SettingsService settingsService,
 			IUserContext context, SiteCache siteCache, ConfigReaderWriter configReaderWriter)
-			: base(settings, userManager, context, settingsService) 
+			: base(settings, userManager, context, settingsService)
 		{
 			_settingsService = settingsService;
 			_siteCache = siteCache;
@@ -45,13 +47,12 @@ namespace Roadkill.Core.Mvc.Controllers
 		/// <param name="model">The settings to save to the web.config/database.</param>
 		/// <returns>A <see cref="SettingsViewModel"/> as the model.</returns>
 		[HttpPost]
-		[ValidateInput(false)]
 		public ActionResult Index(SettingsViewModel model)
 		{
 			if (ModelState.IsValid)
 			{
 				_configReaderWriter.Save(model);
-			
+
 				_settingsService.SaveSiteSettings(model);
 				_siteCache.RemoveMenuCacheItems();
 

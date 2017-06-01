@@ -1,7 +1,10 @@
-﻿using Roadkill.Core.Attachments;
+﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Roadkill.Core.Attachments;
 using Roadkill.Core.Configuration;
 using Roadkill.Core.Exceptions;
 using Roadkill.Core.Mvc.Attributes;
+using Roadkill.Core.Security;
 using Roadkill.Core.Services;
 
 namespace Roadkill.Core.Mvc.Controllers
@@ -130,17 +133,26 @@ namespace Roadkill.Core.Mvc.Controllers
 		/// <remarks>This action requires editor rights.</remarks>
 		[EditorRequired]
 		[HttpPost]
-		public JsonResult Upload()
+		public ContentResult Upload()
 		{
 			try
 			{
 				string destinationFolder = Request.Form["destination_folder"];
-				string fileName = _fileService.Upload(destinationFolder, Request.Files);
-				return Json(new { status = "ok", filename = fileName }, "text/plain");
+				string fileName = _fileService.Upload(destinationFolder, no);
+
+				return new ContentResult()
+				{
+					ContentType = "text/plain",
+					Content = JsonConvert.SerializeObject(new { status = "ok", filename = fileName })
+				};
 			}
 			catch (FileException e)
 			{
-				return Json(new { status = "error", message = e.Message }, "text/plain");
+				return new ContentResult()
+				{
+					ContentType = "text/plain",
+					Content = JsonConvert.SerializeObject(new { status = "error", message = e.Message })
+				};
 			}
 		}
 

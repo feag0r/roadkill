@@ -43,21 +43,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="MongoDB.Driver.Legacy">
-      <HintPath>..\..\packages\mongocsharpdriver.2.1.1\lib\net45\MongoDB.Driver.Legacy.dll</HintPath>
-    </Reference>
-    <Reference Include="Npgsql">
-      <HintPath>..\..\packages\Npgsql.3.1.7\lib\net451\Npgsql.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Abstractions">
-      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Web.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Mvc">
-      <HintPath>..\..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Update="Localization\InstallStrings.Designer.cs">
       <DependentUpon>InstallStrings.resx</DependentUpon>
       <DesignTime>True</DesignTime>

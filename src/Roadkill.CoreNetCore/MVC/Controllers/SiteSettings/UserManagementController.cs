@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
 using Roadkill.Core.Configuration;
 using Roadkill.Core.Database;
 using Roadkill.Core.Mvc.Attributes;
 using Roadkill.Core.Mvc.ViewModels;
+using Roadkill.Core.Security;
 using Roadkill.Core.Services;
+using Roadkill.CoreNetCore.Localization;
 
 namespace Roadkill.Core.Mvc.Controllers
 {
@@ -16,16 +19,15 @@ namespace Roadkill.Core.Mvc.Controllers
 	public class UserManagementController : ControllerBase
 	{
 		public UserManagementController(ApplicationSettings settings, UserServiceBase userManager, SettingsService settingsService, IUserContext context)
-			: base(settings, userManager, context, settingsService) 
+			: base(settings, userManager, context, settingsService)
 		{
-
 		}
 
 		/// <summary>
 		/// Displays the Users view.
 		/// </summary>
 		/// <returns>An <see cref="IList{UserViewModel}"/> as the model. The first item contains a list of admin users,
-		/// the second item contains a list of editor users. If Windows authentication is being used, the action uses the 
+		/// the second item contains a list of editor users. If Windows authentication is being used, the action uses the
 		/// UsersForWindows view.</returns>
 		public ActionResult Index()
 		{
@@ -56,7 +58,6 @@ namespace Roadkill.Core.Mvc.Controllers
 			{
 				UserService.AddUser(model.NewEmail, model.NewUsername, model.Password, true, false);
 				return RedirectToAction("Index");
-				
 			}
 			else
 			{
@@ -81,7 +82,6 @@ namespace Roadkill.Core.Mvc.Controllers
 			{
 				UserService.AddUser(model.NewEmail, model.NewUsername, model.Password, false, true);
 				return RedirectToAction("Index");
-
 			}
 			else
 			{

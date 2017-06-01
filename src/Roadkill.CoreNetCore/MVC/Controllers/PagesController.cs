@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using Microsoft.AspNetCore.Mvc;
 using Roadkill.Core.Configuration;
 using Roadkill.Core.Services;
 using Roadkill.Core.Mvc.Attributes;
 using Roadkill.Core.Mvc.ViewModels;
 using Roadkill.Core.Text;
 using Roadkill.Core.Extensions;
+using Roadkill.Core.Security;
 using Roadkill.Core.Text.Menu;
 using Roadkill.Core.Text.TextMiddleware;
 
@@ -15,7 +18,6 @@ namespace Roadkill.Core.Mvc.Controllers
 	/// <summary>
 	/// Provides all page related functionality, including editing and viewing pages.
 	/// </summary>
-	[HandleError]
 	[OptionalAuthorization]
 	public class PagesController : ControllerBase
 	{
@@ -66,10 +68,10 @@ namespace Roadkill.Core.Mvc.Controllers
 		{
 			IEnumerable<TagViewModel> tags = _pageService.AllTags();
 			if (!string.IsNullOrEmpty(term))
-				tags = tags.Where(x => x.Name.StartsWith(term, StringComparison.InvariantCultureIgnoreCase));
+				tags = tags.Where(x => x.Name.StartsWith(term, StringComparison.CurrentCultureIgnoreCase));
 
 			IEnumerable<string> tagsJson = tags.Select(t => t.Name).ToList();
-			return Json(tagsJson, JsonRequestBehavior.AllowGet);
+			return Json(tagsJson);
 		}
 
 		/// <summary>
@@ -121,7 +123,7 @@ namespace Roadkill.Core.Mvc.Controllers
 			if (model != null)
 			{
 				if (model.IsLocked && !Context.IsAdmin)
-					return new HttpStatusCodeResult(403, string.Format("The page '{0}' can only be edited by administrators.", model.Title));
+					return new StatusCodeResult(403);
 
 				model.AllTags = _pageService.AllTags().ToList();
 
@@ -141,7 +143,6 @@ namespace Roadkill.Core.Mvc.Controllers
 		/// <remarks>This action requires editor rights.</remarks>
 		[EditorRequired]
 		[HttpPost]
-		[ValidateInput(false)]
 		public ActionResult Edit(PageViewModel model)
 		{
 			if (!ModelState.IsValid)
@@ -153,13 +154,12 @@ namespace Roadkill.Core.Mvc.Controllers
 		}
 
 		/// <summary>
-		/// This action is for JSON calls only. Displays a HTML preview for the provided 
+		/// This action is for JSON calls only. Displays a HTML preview for the provided
 		/// wiki markup/markdown. This action is POST only.
 		/// </summary>
 		/// <param name="id">The wiki markup.</param>
 		/// <returns>The markup as rendered as HTML.</returns>
 		/// <remarks>This action requires editor rights.</remarks>
-		[ValidateInput(false)]
 		[EditorRequired]
 		[HttpPost]
 		public ActionResult GetPreview(string id)
@@ -172,7 +172,7 @@ namespace Roadkill.Core.Mvc.Controllers
 				pagehtml = middlewareBuilder.Execute(id);
 			}
 
-			return JavaScript(pagehtml.Html);
+			return Content(pagehtml.Html, "text/javascript");
 		}
 
 		/// <summary>
@@ -214,7 +214,6 @@ namespace Roadkill.Core.Mvc.Controllers
 		/// <remarks>This action requires editor rights.</remarks>
 		[EditorRequired]
 		[HttpPost]
-		[ValidateInput(false)]
 		public ActionResult New(PageViewModel model)
 		{
 			if (!ModelState.IsValid)
@@ -252,7 +251,7 @@ namespace Roadkill.Core.Mvc.Controllers
 		/// <returns>An <see cref="IEnumerable{PageViewModel}"/> as the model.</returns>
 		public ActionResult Tag(string id)
 		{
-			id = HttpUtility.UrlDecode(id);
+			id = WebUtility.UrlDecode(id);
 			ViewData["Tagname"] = id;
 
 			return View(_pageService.FindByTag(id));

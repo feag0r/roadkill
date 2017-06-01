@@ -1,7 +1,9 @@
-﻿using Roadkill.Core.Configuration;
+﻿using Microsoft.AspNetCore.Mvc;
+using Roadkill.Core.Configuration;
 using Roadkill.Core.Services;
 using Roadkill.Core.Mvc.Attributes;
 using Roadkill.Core.Mvc.ViewModels;
+using Roadkill.Core.Security;
 
 namespace Roadkill.Core.Mvc.Controllers
 {
@@ -15,7 +17,7 @@ namespace Roadkill.Core.Mvc.Controllers
 
 		public WikiController(ApplicationSettings settings, UserServiceBase userManager, PageService pageService,
 			IUserContext context, SettingsService settingsService)
-			: base(settings, userManager, context, settingsService) 
+			: base(settings, userManager, context, settingsService)
 		{
 			PageService = pageService;
 		}
@@ -37,7 +39,7 @@ namespace Roadkill.Core.Mvc.Controllers
 			PageViewModel model = PageService.GetById(id.Value, true);
 
 			if (model == null)
-				throw new HttpException(404, string.Format("The page with id '{0}' could not be found", id));
+				return new StatusCodeResult(404);
 
 			return View(model);
 		}
