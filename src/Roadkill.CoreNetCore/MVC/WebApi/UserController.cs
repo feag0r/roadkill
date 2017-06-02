@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using Roadkill.Core.Database;
 using Roadkill.Core.Mvc.ViewModels;
+using Roadkill.Core.Security;
 
 namespace Roadkill.Core.Mvc.WebApi
 {
-	[RoutePrefix("api/user")]
+	[Route("api/user")]
 	[ApiKeyAuthorize]
-	public class UserController : ApiController
+	public class UserController : ControllerBase
 	{
 		private readonly UserServiceBase _userService;
 

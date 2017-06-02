@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Net;
 using System.Net.Http;
+using Microsoft.AspNetCore.Authorization;
 using Roadkill.Core.Configuration;
 using StructureMap.Attributes;
 
@@ -13,18 +14,19 @@ namespace Roadkill.Core.Mvc.WebApi
 
 		public static readonly string APIKEY_HEADER_KEY = "Authorization";
 
-		public override void OnAuthorization(HttpActionContext actionContext)
-		{
-			if (!actionContext.Request.Headers.Contains(APIKEY_HEADER_KEY))
-			{
-				actionContext.Response = new HttpResponseMessage(HttpStatusCode.BadRequest);
-				return;
-			}
+		// TODO: NETStandard - figure out how this works now
+		//public override void OnAuthorization(HttpActionContext actionContext)
+		//{
+		//	if (!actionContext.Request.Headers.Contains(APIKEY_HEADER_KEY))
+		//	{
+		//		actionContext.Response = new HttpResponseMessage(HttpStatusCode.BadRequest);
+		//		return;
+		//	}
 
-			string keyValue = actionContext.Request.Headers.GetValues(APIKEY_HEADER_KEY).First();
+		//	string keyValue = actionContext.Request.Headers.GetValues(APIKEY_HEADER_KEY).First();
 
-			if (!ApplicationSettings.ApiKeys.Contains(keyValue))
-				actionContext.Response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
-		}
+		//	if (!ApplicationSettings.ApiKeys.Contains(keyValue))
+		//		actionContext.Response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
+		//}
 	}
 }

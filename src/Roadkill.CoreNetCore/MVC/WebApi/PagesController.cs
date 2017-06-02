@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
 using Roadkill.Core.Mvc.ViewModels;
 using Roadkill.Core.Services;
 
 namespace Roadkill.Core.Mvc.WebApi
 {
-	[RoutePrefix("api/pages")]
+	[Route("api/pages")]
 	[ApiKeyAuthorize]
-	public class PagesController : ApiController
+	public class PagesController : ControllerBase
 	{
-		private IPageService _pageService;
+		private readonly IPageService _pageService;
 
 		public PagesController(IPageService pageService)
 		{

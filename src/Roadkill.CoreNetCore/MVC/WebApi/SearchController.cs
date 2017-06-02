@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
 using Roadkill.Core.Mvc.ViewModels;
 using Roadkill.Core.Services;
 
 namespace Roadkill.Core.Mvc.WebApi
 {
-	[RoutePrefix("api/search")]
+	[Route("api/search")]
 	[ApiKeyAuthorize]
-	public class SearchController : ApiController
+	public class SearchController : ControllerBase
 	{
 		private readonly SearchService _searchService;
 
