@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lucene.Net.Documents;
+using Lucene.Net.Index;
+using Lucene.Net.Search;
 
 namespace Roadkill.Core.Mvc.ViewModels
 {
@@ -10,7 +13,7 @@ namespace Roadkill.Core.Mvc.ViewModels
 	public class SearchResultViewModel
 	{
 		/// <summary>
-		/// The page id 
+		/// The page id
 		/// </summary>
 		public int Id { get; internal set; }
 
@@ -85,23 +88,23 @@ namespace Roadkill.Core.Mvc.ViewModels
 		public SearchResultViewModel(Document document, ScoreDoc scoreDoc)
 		{
 			if (document == null)
-				throw new ArgumentNullException("document");
+				throw new ArgumentNullException(nameof(document));
 
 			if (scoreDoc == null)
-				throw new ArgumentNullException("scoreDoc");
+				throw new ArgumentNullException(nameof(scoreDoc));
 
 			EnsureFieldsExist(document);
 
-			Id = int.Parse(document.GetField("id").StringValue);
-			Title = document.GetField("title").StringValue;
-			ContentSummary = document.GetField("contentsummary").StringValue;
-			Tags = document.GetField("tags").StringValue;
-			CreatedBy = document.GetField("createdby").StringValue;		
-			ContentLength = int.Parse(document.GetField("contentlength").StringValue);
+			Id = int.Parse(document.GetField("id").GetStringValue());
+			Title = document.GetField("title").GetStringValue();
+			ContentSummary = document.GetField("contentsummary").GetStringValue();
+			Tags = document.GetField("tags").GetStringValue();
+			CreatedBy = document.GetField("createdby").GetStringValue();
+			ContentLength = int.Parse(document.GetField("contentlength").GetStringValue());
 			Score = scoreDoc.Score;
 
 			DateTime createdOn = DateTime.UtcNow;
-			if (!DateTime.TryParse(document.GetField("createdon").StringValue, out createdOn))
+			if (!DateTime.TryParse(document.GetField("createdon").GetStringValue(), out createdOn))
 				createdOn = DateTime.UtcNow;
 
 			CreatedOn = createdOn;
@@ -109,7 +112,7 @@ namespace Roadkill.Core.Mvc.ViewModels
 
 		private void EnsureFieldsExist(Document document)
 		{
-			IList<IFieldable> fields = document.GetFields();
+			IList<IIndexableField> fields = document.Fields;
 			EnsureFieldExists(fields, "id");
 			EnsureFieldExists(fields, "title");
 			EnsureFieldExists(fields, "contentsummary");
@@ -119,7 +122,7 @@ namespace Roadkill.Core.Mvc.ViewModels
 			EnsureFieldExists(fields, "createdon");
 		}
 
-		private void EnsureFieldExists(IList<IFieldable> fields, string fieldname)
+		private void EnsureFieldExists(IList<IIndexableField> fields, string fieldname)
 		{
 			if (fields.Any(x => x.Name == fieldname) == false)
 				throw new SearchException(null, "The LuceneDocument did not contain the expected field '{0}'", fieldname);

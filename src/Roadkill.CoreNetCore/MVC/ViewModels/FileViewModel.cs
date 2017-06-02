@@ -17,13 +17,12 @@ namespace Roadkill.Core.Mvc.ViewModels
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FileViewModel"/> class.
 		/// </summary>
-		/// <param name="relativePath">The relative path of the filename</param>
 		public FileViewModel(string name, string extension, long size, DateTime createDate, string folder)
 		{
 			Name = name;
 			Extension = extension;
 			Size = size;
-			CreateDate = createDate.ToShortDateString();
+			CreateDate = createDate.ToString("d");
 			Folder = folder;
 		}
 	}

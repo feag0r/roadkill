@@ -4,7 +4,9 @@ using System.Linq;
 using System.ComponentModel.DataAnnotations;
 using Roadkill.Core.Database;
 using System.Text.RegularExpressions;
+using System.Xml.Serialization;
 using Roadkill.Core.Text.Menu;
+using Roadkill.CoreNetCore.Localization;
 
 namespace Roadkill.Core.Mvc.ViewModels
 {
@@ -14,9 +16,9 @@ namespace Roadkill.Core.Mvc.ViewModels
 	[CustomValidation(typeof(PageViewModel), "VerifyRawTags")]
 	public class PageViewModel
 	{
-		private static string[] _tagBlackList = 
+		private static string[] _tagBlackList =
 		{
-			"#", ";", "/", "?", ":", "@", "&", "=", "{", "}", "|", "\\", "^", "[", "]", "`"		
+			"#", ";", "/", "?", ":", "@", "&", "=", "{", "}", "|", "\\", "^", "[", "]", "`"
 		};
 
 		private List<string> _tags;
@@ -27,7 +29,7 @@ namespace Roadkill.Core.Mvc.ViewModels
 		/// The page's unique id.
 		/// </summary>
 		public int Id { get; set; }
-		
+
 		/// <summary>
 		/// The text content for the page.
 		/// </summary>
@@ -44,8 +46,8 @@ namespace Roadkill.Core.Mvc.ViewModels
 		}
 
 		/// <summary>
-		/// The content after it has been transformed into HTML by the current wiki markup converter. This property 
-		/// is only set when the PageContent object is passed into the constructor, and is empty unless explicitly 
+		/// The content after it has been transformed into HTML by the current wiki markup converter. This property
+		/// is only set when the PageContent object is passed into the constructor, and is empty unless explicitly
 		/// set by the caller.
 		/// </summary> TODO: remove
 		public string ContentAsHtml { get; set; }
@@ -92,7 +94,7 @@ namespace Roadkill.Core.Mvc.ViewModels
 				return string.Format("{0}Z", ModifiedOn.ToString("s"));
 			}
 		}
-		
+
 		/// <summary>
 		/// Gets the tags for the page as a list.
 		/// </summary>
@@ -106,9 +108,9 @@ namespace Roadkill.Core.Mvc.ViewModels
 		/// </summary>
 		public string RawTags
 		{
-			get 
-			{ 
-				return _rawTags; 
+			get
+			{
+				return _rawTags;
 			}
 			set
 			{
@@ -125,7 +127,7 @@ namespace Roadkill.Core.Mvc.ViewModels
 		/// <summary>
 		/// The page title.
 		/// </summary>
-		[Required(ErrorMessageResourceType=typeof(SiteStrings), ErrorMessageResourceName="Page_Validation_Title")]
+		[Required(ErrorMessageResourceType = typeof(SiteStrings), ErrorMessageResourceName = "Page_Validation_Title")]
 		public string Title { get; set; }
 
 		/// <summary>
@@ -138,7 +140,7 @@ namespace Roadkill.Core.Mvc.ViewModels
 				return PageViewModel.EncodePageTitle(Title);
 			}
 		}
-		
+
 		/// <summary>
 		/// The current version number for the page.
 		/// </summary>
@@ -150,7 +152,7 @@ namespace Roadkill.Core.Mvc.ViewModels
 		public bool IsLocked { get; set; }
 
 		/// <summary>
-		/// Determines if the summary object can be cached on the browser and in the object cache. 
+		/// Determines if the summary object can be cached on the browser and in the object cache.
 		/// This is true by default, but plugins that run on a page can mark a page as not cacheable.
 		/// </summary>
 		public bool IsCacheable { get; set; }
@@ -220,7 +222,6 @@ namespace Roadkill.Core.Mvc.ViewModels
 			if (pageContent.Page == null)
 				throw new ArgumentNullException("pageContent.Page");
 
-
 			Id = pageContent.Page.Id;
 			Title = pageContent.Page.Title;
 			PreviousTitle = pageContent.Page.Title;
@@ -259,7 +260,7 @@ namespace Roadkill.Core.Mvc.ViewModels
 		public string JavascriptArrayForAllTags()
 		{
 			IEnumerable<string> allTags = AllTags.OrderBy(x => x.Name).Select(t => t.Name);
-			return "\"" +string.Join("\", \"", allTags) + "\"";
+			return "\"" + string.Join("\", \"", allTags) + "\"";
 		}
 
 		/// <summary>
@@ -310,7 +311,7 @@ namespace Roadkill.Core.Mvc.ViewModels
 		}
 
 		/// <summary>
-		/// Returns false if the tag contains ; / ? : @ & = { } | \ ^ [ ] `		
+		/// Returns false if the tag contains ; / ? : @ & = { } | \ ^ [ ] `
 		/// </summary>
 		/// <param name="tag">The tag</param>
 		/// <returns></returns>
@@ -343,7 +344,7 @@ namespace Roadkill.Core.Mvc.ViewModels
 			// remove invalid characters
 			title = Regex.Replace(title, @"[^\w\d\s-]", "");  // this is unicode safe, but may need to revert back to 'a-zA-Z0-9', need to check spec
 
-			// convert multiple spaces/hyphens into one space       
+			// convert multiple spaces/hyphens into one space
 			title = Regex.Replace(title, @"[\s-]+", " ").Trim();
 
 			// If it's over 30 chars, take the first 30.

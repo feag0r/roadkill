@@ -4,6 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Roadkill.CoreNetCore.Localization;
 
 namespace Roadkill.Core.Mvc.ViewModels
 {
@@ -54,9 +57,10 @@ namespace Roadkill.Core.Mvc.ViewModels
 		public string RecaptchaPublicKey { get; set; }
 		public bool UseAzureFileStorage { get; set; }
 		public bool UseWindowsAuth { get; set; }
-		
+
 		// v2.0
 		public bool OverwriteExistingFiles { get; set; }
+
 		public string HeadContent { get; set; }
 		public string MenuMarkup { get; set; }
 
@@ -68,26 +72,13 @@ namespace Roadkill.Core.Mvc.ViewModels
 		/// </summary>
 		public bool UpdateSuccessful { get; set; }
 
-
 		/// <summary>
 		/// Gets an IEnumerable{SelectListItem} from a the SettingsViewModel.DatabaseTypesAvailable, as a default
 		/// SelectList doesn't add option value attributes.
 		/// </summary>
-		public List<SelectListItem> DatabaseTypesAsSelectList
-		{
-			get
-			{
-				return _supportedDatabasesSelectList;
-			}
-		}
+		public List<SelectListItem> DatabaseTypesAsSelectList => _supportedDatabasesSelectList;
 
-		public IEnumerable<string> MarkupTypesAvailable
-		{
-			get
-			{
-				return new string[] { "Creole","Markdown","MediaWiki" };
-			}
-		}
+		public IEnumerable<string> MarkupTypesAvailable => new string[] { "Creole", "Markdown", "MediaWiki" };
 
 		public IEnumerable<string> ThemesAvailable
 		{
@@ -95,7 +86,8 @@ namespace Roadkill.Core.Mvc.ViewModels
 			{
 				if (string.IsNullOrEmpty(_themesRoot))
 				{
-					_themesRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Themes");
+					// TODO - NETStandard - check GetCurrentDirectory is ok
+					_themesRoot = Path.Combine(Directory.GetCurrentDirectory(), "Themes");
 					if (!Directory.Exists(_themesRoot))
 						throw new InvalidOperationException("The Themes directory could not be found");
 				}
@@ -107,20 +99,14 @@ namespace Roadkill.Core.Mvc.ViewModels
 			}
 		}
 
-		public string Version
-		{
-			get
-			{
-				return ApplicationSettings.ProductVersion;
-			}
-		}
+		public string Version => ApplicationSettings.ProductVersion;
 
-		public SettingsViewModel()
+		public SettingsViewModel(Uri requestUri = null)
 		{
-			if (HttpContext.Current != null)
+			if (requestUri != null)
 			{
 				// Default the site's url using the current request
-				Uri uri = HttpContext.Current.Request.Url;
+				Uri uri = requestUri;
 
 				string port = "";
 				if (uri.Port != 80 && uri.Port != 443)
@@ -135,7 +121,7 @@ namespace Roadkill.Core.Mvc.ViewModels
 		}
 
 		/// <summary>
-		/// Fills this instance of SettingsViewModel using the properties from the ApplicationSettings 
+		/// Fills this instance of SettingsViewModel using the properties from the ApplicationSettings
 		/// and the SiteSettings.
 		/// </summary>
 		public SettingsViewModel(ApplicationSettings applicationSettings, SiteSettings siteSettings) : this()

@@ -2,6 +2,8 @@
 using System.ComponentModel.DataAnnotations;
 using Roadkill.Core.Configuration;
 using Roadkill.Core.Database;
+using Roadkill.Core.Security;
+using Roadkill.CoreNetCore.Localization;
 
 namespace Roadkill.Core.Mvc.ViewModels
 {
@@ -18,6 +20,7 @@ namespace Roadkill.Core.Mvc.ViewModels
 	{
 		// These services are required by the static validation methods
 		protected ApplicationSettings Settings;
+
 		protected UserServiceBase UserService;
 
 		/// <summary>
@@ -31,7 +34,7 @@ namespace Roadkill.Core.Mvc.ViewModels
 		/// The firstname of the user.
 		/// </summary>
 		public string Firstname { get; set; }
-		
+
 		/// <summary>
 		/// The last name of the user.
 		/// </summary>
@@ -54,7 +57,7 @@ namespace Roadkill.Core.Mvc.ViewModels
 		/// The current (or if being changed, previous) email.
 		/// Use <see cref="NewEmail"/> for Signups.
 		/// </summary>
-		public string ExistingEmail{ get; set; }
+		public string ExistingEmail { get; set; }
 
 		/// <summary>
 		/// The email to change to. For no change this should be the same as <see cref="ExistingEmail"/>
@@ -176,7 +179,7 @@ namespace Roadkill.Core.Mvc.ViewModels
 		/// </summary>
 		/// <param name="user"></param>
 		/// <param name="context"></param>
-		/// <returns><see cref="ValidationResult.Success"/> if the username hasn't changed, 
+		/// <returns><see cref="ValidationResult.Success"/> if the username hasn't changed,
 		/// or if it has and the new username doesn't  already exist.</returns>
 		public static ValidationResult VerifyNewUsernameIsNotInUse(UserViewModel user, ValidationContext context)
 		{
@@ -214,7 +217,7 @@ namespace Roadkill.Core.Mvc.ViewModels
 		/// Checks if the <see cref="NewEmail"/> provided is already a user in the system.
 		/// </summary>
 		/// <param name="user"></param>
-		/// <returns><see cref="ValidationResult.Success"/> if the email hasn't changed, 
+		/// <returns><see cref="ValidationResult.Success"/> if the email hasn't changed,
 		/// or if it has and the new email doesn't  already exist.</returns>
 		public static ValidationResult VerifyNewEmailIsNotInUse(UserViewModel user, ValidationContext context)
 		{
