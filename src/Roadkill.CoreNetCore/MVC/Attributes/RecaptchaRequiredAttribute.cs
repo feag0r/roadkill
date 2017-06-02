@@ -12,7 +12,7 @@ namespace Roadkill.Core.Mvc.Attributes
 		private static readonly string RESPONSE_KEY = "recaptcha_response_field";
 
 		// TODO: NETStandard - turn this into middleware?
-
+		// see: http://benfoster.io/blog/how-to-write-owin-middleware-in-5-different-steps
 		//public override void OnActionExecuting(ActionExecutingContext filterContext)
 		//{
 		//	Roadkill.Core.Mvc.Controllers.ControllerBase controller = filterContext.Controller as Roadkill.Core.Mvc.Controllers.ControllerBase;
