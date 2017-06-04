@@ -1,7 +1,4 @@
-﻿using System;
-using Roadkill.Core.Database;
-using Roadkill.Core.Mvc.ViewModels;
-using Roadkill.Core.Security;
+﻿using Roadkill.Core.Database;
 
 namespace Roadkill.Core.Security
 {
@@ -109,7 +106,7 @@ namespace Roadkill.Core.Security
 		}
 
 		/// <summary>
-		/// Whether the user is currently logged in or not. If the <see cref="CurrentUser"/> 
+		/// Whether the user is currently logged in or not. If the <see cref="CurrentUser"/>
 		/// property is populated, this is assumed to be true.
 		/// </summary>
 		public bool IsLoggedIn

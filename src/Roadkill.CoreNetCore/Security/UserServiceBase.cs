@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Security.Principal;
-using System.Web;
-using Microsoft.AspNetCore.Http;
 using Roadkill.Core.Configuration;
 using Roadkill.Core.Database;
 using Roadkill.Core.Services;
 using Roadkill.Core.Mvc.ViewModels;
-using StructureMap;
 
 namespace Roadkill.Core.Security
 {
@@ -131,7 +127,7 @@ namespace Roadkill.Core.Security
 		public abstract IEnumerable<UserViewModel> ListEditors();
 
 		/// <summary>
-		/// Signs the user out with (typically with <see cref="FormsAuthentication"/>).
+		/// Signs the user out.
 		/// </summary>
 		public abstract void Logout();
 
@@ -145,7 +141,7 @@ namespace Roadkill.Core.Security
 		/// <summary>
 		/// Creates a user in the system without setting the <see cref="User.IsActivated"/>, in other words for a user confirmation email.
 		/// </summary>
-		/// <param name="user">The user details to signup.</param>
+		/// <param name="model">The user details to signup.</param>
 		/// <param name="completed">Called once the signup (e.g. email is sent) is complete. Pass Null for no action.</param>
 		/// <returns>The activation key for the signup, or an empty string if the user details are invalid.</returns>
 		public abstract string Signup(UserViewModel model, Action completed);
@@ -165,8 +161,6 @@ namespace Roadkill.Core.Security
 		/// <summary>
 		/// Changes the email(username) of user to a new email address.
 		/// </summary>
-		/// <param name="email">The existing email address or username of the user.</param>
-		/// <param name="newEmail">The new email/username.</param>
 		/// <returns>true if the change was successful;false if the new email address already exists in the system.</returns>
 		public abstract bool UpdateUser(UserViewModel model);
 
@@ -180,7 +174,6 @@ namespace Roadkill.Core.Security
 		/// <summary>
 		/// Determines whether the user with the given username exists.
 		/// </summary>
-		/// <param name="email">The username of the user.</param>
 		/// <returns>true if the user exists;false otherwise.</returns>
 		public abstract bool UserNameExists(string username);
 

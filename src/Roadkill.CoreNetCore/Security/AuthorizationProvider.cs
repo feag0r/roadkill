@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
 using Roadkill.Core.Configuration;
-using Roadkill.Core.Security;
 
 namespace Roadkill.Core.Security
 {
@@ -17,10 +12,10 @@ namespace Roadkill.Core.Security
 		public AuthorizationProvider(ApplicationSettings applicationSettings, UserServiceBase userService)
 		{
 			if (applicationSettings == null)
-				throw new ArgumentNullException("applicationSettings");
+				throw new ArgumentNullException(nameof(applicationSettings));
 
 			if (userService == null)
-				throw new ArgumentNullException("userService");
+				throw new ArgumentNullException(nameof(userService));
 
 			_applicationSettings = applicationSettings;
 			_userService = userService;

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web.Security;
-using System.Web;
+using System.Security.Principal;
 using Roadkill.Core.Configuration;
 using Roadkill.Core.Database;
 using Roadkill.Core.Mvc.ViewModels;
@@ -119,11 +118,12 @@ namespace Roadkill.Core.Security
 				{
 					if (user.Password == User.HashPassword(password, user.Salt))
 					{
+						// TODO: NETStandard - figure out of this method is usable anymore.
 						bool isFormsAuthEnabled = FormsAuthenticationWrapper.IsEnabled();
-						if (isFormsAuthEnabled)
-						{
-							FormsAuthentication.SetAuthCookie(user.Id.ToString(), true);
-						}
+						//if (isFormsAuthEnabled)
+						//{
+						//	FormsAuthentication.SetAuthCookie(user.Id.ToString(), true);
+						//}
 
 						return true;
 					}
@@ -366,10 +366,12 @@ namespace Roadkill.Core.Security
 		public override void Logout()
 		{
 			bool isFormsAuthEnabled = FormsAuthenticationWrapper.IsEnabled();
-			if (isFormsAuthEnabled)
-			{
-				FormsAuthentication.SignOut();
-			}
+
+			// TODO: NETStandard - probably needs OAuth client side now
+			//if (isFormsAuthEnabled)
+			//{
+			//	FormsAuthentication.SignOut();
+			//}
 		}
 
 		/// <summary>
@@ -614,7 +616,6 @@ namespace Roadkill.Core.Security
 			}
 		}
 
-
 		/// <summary>
 		/// Determines whether the user with the given username exists.
 		/// </summary>
@@ -639,33 +640,14 @@ namespace Roadkill.Core.Security
 		/// Gets the current username by decrypting the cookie. If FormsAuthentication is disabled or
 		/// there is no logged in user, this returns an empty string.
 		/// </summary>
-		public override string GetLoggedInUserName(HttpContextBase context)
+		public override string GetLoggedInUserName(IIdentity identity)
 		{
-			if (context == null || context.Request == null || context.Request.Cookies == null)
-				return "";
-
-			bool isFormsAuthEnabled = FormsAuthenticationWrapper.IsEnabled();
-
-			if (isFormsAuthEnabled)
-			{
-				string cookieName = FormsAuthenticationWrapper.CookieName();
-				if (!string.IsNullOrEmpty(cookieName) && context.Request.Cookies[cookieName] != null)
-				{
-					string cookie = context.Request.Cookies[cookieName].Value;
-					if (!string.IsNullOrEmpty(cookie))
-					{
-						FormsAuthenticationTicket ticket = FormsAuthentication.Decrypt(cookie);
-						if (ticket != null)
-							return ticket.Name;
-					}
-				}
-			}
-
-			return "";
+			// TODO: NETStandard - how is this going to work if this methods gets the name from a cooookie.
+			throw new NotImplementedException();
 		}
 
 		/// <summary>
-		/// Gets the currently logged in user, based off the cookie or HttpContext user identity value set during authentication. 
+		/// Gets the currently logged in user, based off the cookie or HttpContext user identity value set during authentication.
 		/// The value for FormsAuthentication is the user's Guid id.
 		/// </summary>
 		/// <param name="cookieValue">The user id stored in the cookie.</param>
