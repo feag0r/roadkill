@@ -32,7 +32,7 @@ namespace Roadkill.Core.Services
 		/// </summary>
 		/// <param name="model">The page to remove.</param>
 		/// <exception cref="SearchException">An error occurred with the lucene.net IndexReader while deleting the page from the index.</exception>
-		int Delete(PageViewModel model);
+		void Delete(PageViewModel model);
 
 		/// <summary>
 		/// Updates the <see cref="Page"/> in the search index, by removing it and re-adding it.
