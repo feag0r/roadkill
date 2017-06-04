@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using Roadkill.Core.Logging;
 
 namespace Roadkill.Core.Plugins
@@ -13,7 +14,7 @@ namespace Roadkill.Core.Plugins
 		private List<SettingValue> _values;
 
 		/// <summary>
-		/// The id of the plugin that the setting belongs to, used primarily for readability in the JSON. 
+		/// The id of the plugin that the setting belongs to, used primarily for readability in the JSON.
 		/// </summary>
 		public string PluginId { get; set; }
 
@@ -30,13 +31,7 @@ namespace Roadkill.Core.Plugins
 		/// <summary>
 		/// Gets all the setting values.
 		/// </summary>
-		public IEnumerable<SettingValue> Values
-		{
-			get
-			{
-				return _values;
-			}
-		}
+		public IEnumerable<SettingValue> Values => _values;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Settings"/> class.
@@ -67,12 +62,12 @@ namespace Roadkill.Core.Plugins
 				settingValue.Name = name;
 				_values.Add(settingValue);
 			}
-            
+
 			// Set form type first, so that the validation happens
-			// Though the after-the-fact validation will work even 
-            // if done other way around.
+			// Though the after-the-fact validation will work even
+			// if done other way around.
 			settingValue.FormType = formType;
-            settingValue.Value = value;
+			settingValue.Value = value;
 		}
 
 		/// <summary>
@@ -103,7 +98,7 @@ namespace Roadkill.Core.Plugins
 		/// Creates an new <see cref="Settings"/> instance from the JSON provided.
 		/// </summary>
 		/// <param name="json">The json.</param>
-		/// <returns>A new <see cref="Settings"/> instance or if the JSON couldn't be deserialized, a <see cref="Settings"/> 
+		/// <returns>A new <see cref="Settings"/> instance or if the JSON couldn't be deserialized, a <see cref="Settings"/>
 		/// instance with a dummy (random) plugin ID and version, and errors logged to the log.</returns>
 		public static Settings LoadFromJson(string json)
 		{
@@ -111,7 +106,7 @@ namespace Roadkill.Core.Plugins
 			if (string.IsNullOrEmpty(json))
 			{
 				Log.Warn("PluginSettings.LoadFromJson - json string was empty (returning a default Settings object)");
-				return new Settings("error - dummy id: " +Guid.NewGuid(), "1.0");
+				return new Settings("error - dummy id: " + Guid.NewGuid(), "1.0");
 			}
 
 			try

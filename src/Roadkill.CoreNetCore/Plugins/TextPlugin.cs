@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Roadkill.Core.Cache;
 using Roadkill.Core.Configuration;
 using Roadkill.Core.Database.Repositories;
@@ -55,9 +56,9 @@ namespace Roadkill.Core.Plugins
 		/// The current plugin version, using the standard .NET version format.
 		/// </summary>
 		public abstract string Version { get; }
-		
+
 		/// <summary>
-		/// Gets or sets the current Roadkill <see cref="ApplicationSettings"/>. This property is automatically filled by Roadkill 
+		/// Gets or sets the current Roadkill <see cref="ApplicationSettings"/>. This property is automatically filled by Roadkill
 		/// when the plugin is loaded.
 		/// </summary>
 		[SetterProperty]
@@ -65,6 +66,7 @@ namespace Roadkill.Core.Plugins
 
 		// These are setter injected at creation time by the DI manager
 		internal IPluginCache PluginCache { get; set; }
+
 		internal ISettingsRepository SettingsRepository { get; set; }
 
 		/// <summary>
@@ -73,8 +75,8 @@ namespace Roadkill.Core.Plugins
 		public virtual bool IsCacheable { get; set; }
 
 		/// <summary>
-		/// Gets the plugin's <see cref="Settings"/>. If cached, the settings are loaded from there, otherwise they 
-		/// are loaded from the database. If no settings exist in the database for the plugin, a new <see cref="Settings"/> 
+		/// Gets the plugin's <see cref="Settings"/>. If cached, the settings are loaded from there, otherwise they
+		/// are loaded from the database. If no settings exist in the database for the plugin, a new <see cref="Settings"/>
 		/// instance is created, saved to the database and returned.
 		/// </summary>
 		public Settings Settings
@@ -118,7 +120,7 @@ namespace Roadkill.Core.Plugins
 		}
 
 		/// <summary>
-		/// Gets the unique id used for storing the plugin settings in the database. This is a Guid generated based on the 
+		/// Gets the unique id used for storing the plugin settings in the database. This is a Guid generated based on the
 		/// plugin ID and version number.
 		/// </summary>
 		public Guid DatabaseId
@@ -127,12 +129,12 @@ namespace Roadkill.Core.Plugins
 			{
 				// Generate an ID for use in the database in the format:
 				// {aaaaaaaa-bbbb-0000-0000-000000000000}
-				// Where 
+				// Where
 				//		a = hashcode of the plugin id
-				//		b = hashcode of version number 
-				// 
-				// It's not globally unique, but it doesn't matter as it's 
-				// being used for the site_configuration database table only. The only 
+				//		b = hashcode of version number
+				//
+				// It's not globally unique, but it doesn't matter as it's
+				// being used for the site_configuration database table only. The only
 				// way the Guid could clash is if two plugins have the same ID.
 				// This should never happen, as the IDs will be like nuget ids.
 				//
@@ -222,7 +224,7 @@ namespace Roadkill.Core.Plugins
 		}
 
 		/// <summary>
-		/// Called when settings are first initialized by the <see cref="Settings"/> property. When overriden this 
+		/// Called when settings are first initialized by the <see cref="Settings"/> property. When overriden this
 		/// method allows you add settings and their defaults that the plugin requires.
 		/// </summary>
 		/// <param name="settings">The plugin settings.</param>
@@ -234,7 +236,7 @@ namespace Roadkill.Core.Plugins
 		/// Called before the page's markdown is parsed by the current <see cref="IMarkupParser"/>
 		/// </summary>
 		/// <param name="markupText">The page's markup text.</param>
-		/// <returns>When overriden, this method should search the markup for the plugin's token, and replace it the parsed value. 
+		/// <returns>When overriden, this method should search the markup for the plugin's token, and replace it the parsed value.
 		/// The plugin's token should also be replaced using <see cref="ParserSafeToken"/> to ensure the current <see cref="IMarkupParser"/> doesn't try
 		/// to parse any markdown inside it.</returns>
 		public virtual string BeforeParse(string markupText)
@@ -246,8 +248,8 @@ namespace Roadkill.Core.Plugins
 		/// Called after the page's markdown has been parsed by the current <see cref="IMarkupParser"/>.
 		/// </summary>
 		/// <param name="html">The page's HTML.</param>
-		/// <returns>When overriden, this method can add any extra HTML to the page's content. This method shouldn't be used for adding 
-		/// scripts or CSS unless you explicitly need to, use the <see cref="GetHeadContent"/> and related methods for this. 
+		/// <returns>When overriden, this method can add any extra HTML to the page's content. This method shouldn't be used for adding
+		/// scripts or CSS unless you explicitly need to, use the <see cref="GetHeadContent"/> and related methods for this.
 		/// NOTE: the HTML you return does not have its content stripped of any unsafe HTML (such as script tags) so you are responsible for
 		/// ensuring your HTML has no security exploits such as XSS attacks.</returns>
 		public virtual string AfterParse(string html)
@@ -296,7 +298,7 @@ namespace Roadkill.Core.Plugins
 		}
 
 		/// <summary>
-		/// When overriden by implementing plugins, gets any HTML that should be added to the current page just before the container 
+		/// When overriden by implementing plugins, gets any HTML that should be added to the current page just before the container
 		/// (&lt;div id="container&gt;) tag.
 		/// </summary>
 		/// <returns>Additional HTML.</returns>
@@ -306,7 +308,7 @@ namespace Roadkill.Core.Plugins
 		}
 
 		/// <summary>
-		/// When overriden by implementing plugins, gets any HTML that should be added to the current page just after the container 
+		/// When overriden by implementing plugins, gets any HTML that should be added to the current page just after the container
 		/// (&lt;div id="container&gt;) tag.
 		/// </summary>
 		/// <returns>Additional HTML.</returns>
@@ -325,14 +327,14 @@ namespace Roadkill.Core.Plugins
 			string headScript = "<script type=\"text/javascript\">";
 			headScript += "head.js(";
 			headScript += string.Join(",\n", _scriptFiles);
-			headScript += ",function() { " +_onLoadFunction+ " })";
+			headScript += ",function() { " + _onLoadFunction + " })";
 			headScript += "</script>\n";
 
 			return headScript;
 		}
 
 		/// <summary>
-		/// Sets the Head.JS OnLoaded function for the plugin, which allows the plugin to make additional Javascript calls once any 
+		/// Sets the Head.JS OnLoaded function for the plugin, which allows the plugin to make additional Javascript calls once any
 		/// Javascript script files have been loaded.
 		/// </summary>
 		/// <param name="functionBody">The Javascript function body.</param>
@@ -344,11 +346,11 @@ namespace Roadkill.Core.Plugins
 		/// <summary>
 		/// Adds a Javascript file to the page, assuming the script file is stored in the {siteroot}/Plugins/ID/ folder.
 		/// </summary>
-		/// <param name="filename">The filename of the Javascript file. If this contains a path, it should be relative to the plugin directory, 
+		/// <param name="filename">The filename of the Javascript file. If this contains a path, it should be relative to the plugin directory,
 		/// for example 'scripts/morescripts/myfile.js'.</param>
 		/// <param name="name">A unique name for the script file (used by Head.JS). For example this could be 'angular' for AngularJs.</param>
 		/// <param name="useHeadJs">if set to <c>true</c> then the script will be loaded using Head.JS. Currently only Head.JS is supported.</param>
-		public void AddScript(string filename, string name = "", bool useHeadJs = true)
+		public void AddScript(string filename, UrlHelper urlHelper, string name = "", bool useHeadJs = true)
 		{
 			if (useHeadJs)
 			{
@@ -358,13 +360,7 @@ namespace Roadkill.Core.Plugins
 					fileLink = "\"[filename]\"";
 				}
 
-				// Get the server path
-				if (HttpContext.Current != null)
-				{
-					UrlHelper urlHelper = new UrlHelper(HttpContext.Current.Request.RequestContext);
-					filename = string.Concat(urlHelper.Content(PluginVirtualPath), "/", filename);
-				}
-
+				filename = string.Concat(urlHelper.Content(PluginVirtualPath), "/", filename);
 				fileLink = fileLink.Replace("[name]", name);
 				fileLink = fileLink.Replace("[filename]", filename);
 
@@ -379,27 +375,19 @@ namespace Roadkill.Core.Plugins
 		/// <summary>
 		/// Gets the HTML for a CSS link for the plugin, assuming the CSS is stored in the {siteroot}/Plugins/ID/ folder.
 		/// </summary>
-		public string GetCssLink(string filename)
+		public string GetCssLink(string filename, UrlHelper urlHelper)
 		{
 			string cssLink = "\t\t<link href=\"{0}/{1}?version={2}\" rel=\"stylesheet\" type=\"text/css\" />\n";
-			string html = "";
 
-			if (HttpContext.Current != null)
-			{
-				UrlHelper urlHelper = new UrlHelper(HttpContext.Current.Request.RequestContext);
-				html = string.Format(cssLink, urlHelper.Content(PluginVirtualPath), filename, Version);
-			}
-			else
-			{
-				html = string.Format(cssLink, PluginVirtualPath, filename, Version);
-			}
+			string html = "";
+			html = string.Format(cssLink, urlHelper.Content(PluginVirtualPath), filename, Version);
 
 			return html;
 		}
 
 		/// <summary>
-		/// Adds a token to the start and end of the the provided token, so it'll be ignored 
-		/// by the parser. This is necessary for tokens such as [[ and {{ which the parser will 
+		/// Adds a token to the start and end of the the provided token, so it'll be ignored
+		/// by the parser. This is necessary for tokens such as [[ and {{ which the parser will
 		/// try to parse.
 		/// </summary>
 		/// <param name="token">The token the plugin uses. This can be a regex.</param>

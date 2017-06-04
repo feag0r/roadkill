@@ -1,7 +1,10 @@
 ﻿using Roadkill.Core.Configuration;
 using StructureMap.Attributes;
 using Microsoft.AspNetCore.Mvc;
+using Roadkill.Core.DependencyResolution;
 using Roadkill.Core.Mvc.Controllers;
+using Roadkill.Core.Security;
+using Roadkill.Core.Services;
 
 namespace Roadkill.Core.Plugins
 {
@@ -46,7 +49,7 @@ namespace Roadkill.Core.Plugins
 		public abstract string Name { get; }
 
 		/// <summary>
-		/// Returns an <see cref="ActionResult"/> for the special page. This can include a <see cref="ViewResult"/> that 
+		/// Returns an <see cref="ActionResult"/> for the special page. This can include a <see cref="ViewResult"/> that
 		/// points to a view in the /Plugin/PluginId folder.
 		/// </summary>
 		/// <param name="controller">The <see cref="SpecialPagesController"/> that the action belongs to.</param>
