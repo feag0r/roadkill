@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Security.Principal;
 using System.Web;
+using Microsoft.AspNetCore.Http;
 using Roadkill.Core.Configuration;
 using Roadkill.Core.Database;
 using Roadkill.Core.Services;
@@ -183,14 +185,13 @@ namespace Roadkill.Core.Security
 		public abstract bool UserNameExists(string username);
 
 		/// <summary>
-		/// Gets the username for the logged in user based on information stored in the state of the <see cref="HttpContextBase"/>.
+		/// Gets the username for the logged in user based on information stored in the state of the request.
 		/// </summary>
-		/// <param name="context">The current <see cref="System.Web.HttpContext"/> for the request.</param>
 		/// <returns>The username of the logged in user, or an empty string if the user is not logged in.</returns>
-		public abstract string GetLoggedInUserName(HttpContextBase context);
+		public abstract string GetLoggedInUserName(IIdentity identity);
 
 		/// <summary>
-		/// Gets the currently logged in user, based off the cookie or HttpContext user identity value set during authentication. 
+		/// Gets the currently logged in user, based off the cookie or HttpContext user identity value set during authentication.
 		/// </summary>
 		/// <param name="cookieValue">The user id stored in the cookie.</param>
 		/// <returns>A new <see cref="User"/> object</returns>

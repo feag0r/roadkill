@@ -1,7 +1,6 @@
-﻿#if !MONO
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Web;
+using System.Security.Principal;
 using Roadkill.Core.Configuration;
 using Roadkill.Core.Database;
 using Roadkill.Core.Mvc.ViewModels;
@@ -15,12 +14,13 @@ namespace Roadkill.Core.Security.Windows
 	{
 		// Very simplistic caching.
 		private static Dictionary<string, List<string>> _usersInGroupCache = new Dictionary<string, List<string>>();
-		private string _connectionString;
+
+		private readonly string _connectionString;
 		private string _username;
 		private string _password;
-		private List<string> _editorGroupNames;
-		private List<string> _adminGroupNames;
-		private string _domainName;
+		private readonly List<string> _editorGroupNames;
+		private readonly List<string> _adminGroupNames;
+		private readonly string _domainName;
 		private IActiveDirectoryProvider _service;
 
 		/// <summary>
@@ -99,7 +99,6 @@ namespace Roadkill.Core.Security.Windows
 			}
 		}
 
-
 		/// <summary>
 		/// Retrieves a full <see cref="User"/> object for the email address provided, or null if the user doesn't exist.
 		/// </summary>
@@ -169,7 +168,7 @@ namespace Roadkill.Core.Security.Windows
 					users.AddRange(GetUsersInGroup(group));
 				}
 
-                return new HashSet<string>(users).Contains(CleanUsername(email));
+				return new HashSet<string>(users).Contains(CleanUsername(email));
 			}
 			catch (Exception ex)
 			{
@@ -223,16 +222,13 @@ namespace Roadkill.Core.Security.Windows
 			return list;
 		}
 
-		/// <summary>
-		/// Gets the current <see cref="WindowsIdentity"/> username.
-		/// </summary>
-		public override string GetLoggedInUserName(HttpContextBase context)
+		public override string GetLoggedInUserName(IIdentity identity)
 		{
-			return context.Request.LogonUserIdentity.Name;
+			return identity.Name;
 		}
 
 		/// <summary>
-		/// Gets the currently logged in user, based off the cookie or HttpContext user identity value set during authentication. 
+		/// Gets the currently logged in user, based off the cookie or HttpContext user identity value set during authentication.
 		/// For ActiveDirectory this is an empty <see cref="User"/> object with the Username property set to the cookieValue.
 		/// </summary>
 		/// <param name="cookieValue">The user id stored in the cookie.</param>
@@ -292,6 +288,7 @@ namespace Roadkill.Core.Security.Windows
 		}
 
 		#region Not implemented methods
+
 		/// <exception cref="NotImplementedException">This feature is not available with the <see cref="ActiveDirectoryUserService"/></exception>
 		public override bool ActivateUser(string activationKey)
 		{
@@ -381,7 +378,7 @@ namespace Roadkill.Core.Security.Windows
 		{
 			throw new NotImplementedException();
 		}
-		#endregion
+
+		#endregion Not implemented methods
 	}
 }
-#endif

@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.DirectoryServices.AccountManagement;
-using System.Linq;
-using System.Text;
+﻿using System.Security.Principal;
 
 namespace Roadkill.Core.Security.Windows
 {
-	/// <summary>
 	/// Wraps information needed from an <see cref="IPrincipal"/>
 	/// </summary>
 	public interface IPrincipalDetails
