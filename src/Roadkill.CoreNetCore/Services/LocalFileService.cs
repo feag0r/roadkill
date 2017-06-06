@@ -8,6 +8,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System;
+using System.Net;
+using Microsoft.AspNetCore.Http;
+using Roadkill.CoreNetCore.Localization;
 
 namespace Roadkill.Core.Services
 {
@@ -20,7 +23,7 @@ namespace Roadkill.Core.Services
 		private readonly SettingsService _settingsService;
 		private static readonly string[] FilesToExclude = new string[] { "emptyfile.txt", "_installtest.txt" }; // installer/publish files
 
-		#endregion
+		#endregion private properties
 
 		#region constructors
 
@@ -31,11 +34,12 @@ namespace Roadkill.Core.Services
 			_attachmentPathUtil = new AttachmentPathUtil(settings);
 		}
 
-		#endregion
+		#endregion constructors
 
 		#region public methods
 
 		#region deletes
+
 		public void Delete(string filePath, string fileName)
 		{
 			string physicalPath = _attachmentPathUtil.ConvertUrlPathToPhysicalPath(filePath);
@@ -89,13 +93,15 @@ namespace Roadkill.Core.Services
 				throw new FileException(e, "Unable to delete {0} from {1}", folderPath);
 			}
 		}
-		#endregion
+
+		#endregion deletes
 
 		#region creates
+
 		public bool CreateFolder(string parentPath, string folderName)
 		{
 			if (string.IsNullOrEmpty(folderName))
-				throw new ArgumentNullException("folderName", SiteStrings.FileManager_Error_CreateFolder + " " + folderName);
+				throw new ArgumentNullException(nameof(folderName), SiteStrings.FileManager_Error_CreateFolder + " " + folderName);
 
 			string physicalPath = _attachmentPathUtil.ConvertUrlPathToPhysicalPath(parentPath);
 
@@ -120,12 +126,12 @@ namespace Roadkill.Core.Services
 		}
 
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/// <param name="destinationPath">The relative path of the folder to store the file.</param>
 		/// <param name="files"></param>
 		/// <returns></returns>
-		public string Upload(string destinationPath, HttpFileCollectionBase files)
+		public string Upload(string destinationPath, IEnumerable<IFormFile> files)
 		{
 			//string destination = Request.Form["destination_folder"];
 			string physicalPath = _attachmentPathUtil.ConvertUrlPathToPhysicalPath(destinationPath);
@@ -145,10 +151,8 @@ namespace Roadkill.Core.Services
 				IEnumerable<string> allowedExtensions = siteSettings.AllowedFileTypesList
 													.Select(x => x.ToLower());
 
-				for (int i = 0; i < files.Count; i++)
+				foreach (IFormFile sourceFile in files)
 				{
-					// Find the file's extension
-					HttpPostedFileBase sourceFile = files[i];
 					string extension = Path.GetExtension(sourceFile.FileName).Replace(".", "");
 
 					if (!string.IsNullOrEmpty(extension))
@@ -171,7 +175,8 @@ namespace Roadkill.Core.Services
 							}
 						}
 
-						sourceFile.SaveAs(fullFilePath);
+						// TODO: NETStandard - use a stream here
+						//sourceFile.CopyTo();
 						fileName = sourceFile.FileName;
 					}
 					else
@@ -190,9 +195,10 @@ namespace Roadkill.Core.Services
 			}
 		}
 
-		#endregion
+		#endregion creates
 
 		#region reads
+
 		public DirectoryViewModel FolderInfo(string dir)
 		{
 			if (!Directory.Exists(_applicationSettings.AttachmentsDirectoryPath))
@@ -201,7 +207,7 @@ namespace Roadkill.Core.Services
 			}
 
 			string folder = dir;
-			folder = HttpUtility.UrlDecode(folder);
+			folder = WebUtility.UrlDecode(folder);
 
 			string physicalPath = _attachmentPathUtil.ConvertUrlPathToPhysicalPath(folder);
 
@@ -224,7 +230,7 @@ namespace Roadkill.Core.Services
 						DirectoryInfo info = new DirectoryInfo(directory);
 						string fullPath = info.FullName;
 						fullPath = fullPath.Replace(_applicationSettings.AttachmentsDirectoryPath, "");
-						fullPath = fullPath.Replace(Path.DirectorySeparatorChar.ToString(CultureInfo.InvariantCulture), "/");
+						fullPath = fullPath.Replace(Path.DirectorySeparatorChar.ToString(), "/");
 						fullPath = "/" + fullPath; // removed in the 1st replace
 
 						DirectoryViewModel childModel = new DirectoryViewModel(info.Name, fullPath);
@@ -233,7 +239,6 @@ namespace Roadkill.Core.Services
 
 					foreach (string file in Directory.GetFiles(physicalPath))
 					{
-
 						FileInfo info = new FileInfo(file);
 						string filename = info.Name;
 
@@ -284,7 +289,7 @@ namespace Roadkill.Core.Services
 					Log.Warn("The url {0} (translated to {1}) does not exist on the server.", localPath, fullPath);
 
 					// Throw so the web.config catches it
-					throw new HttpException(404, string.Format("{0} does not exist on the server.", localPath));
+					throw new FileNotFoundException($"{localPath} does not exist on the server.");
 				}
 			}
 			catch (IOException ex)
@@ -292,16 +297,17 @@ namespace Roadkill.Core.Services
 				// 500
 				Log.Error(ex, "There was a problem opening the file {0}.", localPath);
 
-				// Throw so the web.config catches it				
-				throw new HttpException(500, "There was a problem opening the file (see the error logs)");
+				// Throw so the web.config catches it
+				throw new FileException("There was a problem opening the file (see the error logs)", ex);
 			}
 		}
 
-		#endregion
+		#endregion reads
 
 		#region helpers
+
 		/// <summary>
-		/// Takes a request's local file path (e.g. /attachments/a.jpg 
+		/// Takes a request's local file path (e.g. /attachments/a.jpg
 		/// and translates it into the correct attachment file path.
 		/// </summary>
 		/// <param name="urlPath">The request's url/local path, which is a url such as /Attachments/foo.jpg.
@@ -336,8 +342,9 @@ namespace Roadkill.Core.Services
 			string fullPath = _applicationSettings.AttachmentsDirectoryPath + filePath;
 			return fullPath;
 		}
-		#endregion
 
-		#endregion
+		#endregion helpers
+
+		#endregion public methods
 	}
 }

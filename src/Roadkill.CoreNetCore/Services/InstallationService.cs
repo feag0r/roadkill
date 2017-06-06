@@ -4,9 +4,11 @@ using Roadkill.Core.Attachments;
 using Roadkill.Core.Configuration;
 using Roadkill.Core.Database;
 using Roadkill.Core.Database.MongoDB;
+using Roadkill.Core.Database.Repositories.Dapper;
 using Roadkill.Core.Database.Schema;
 using Roadkill.Core.DependencyResolution;
 using Roadkill.Core.Mvc.ViewModels;
+using StructureMap;
 
 namespace Roadkill.Core.Services
 {
@@ -16,18 +18,18 @@ namespace Roadkill.Core.Services
 	public class InstallationService : IInstallationService
 	{
 		private Func<string, string, IInstallerRepository> _getRepositoryFunc;
-		internal ServiceLocatorImplBase Locator { get; set; }
+		internal IContainer Container { get; set; }
 
 		public InstallationService()
 		{
 			_getRepositoryFunc = GetRepository;
-			Locator = LocatorStartup.Container;
+			Container = LocatorStartup.Container;
 		}
 
-		internal InstallationService(Func<string, string, IInstallerRepository> getRepositoryFunc, ServiceLocatorImplBase locator)
+		internal InstallationService(Func<string, string, IInstallerRepository> getRepositoryFunc, IContainer container)
 		{
 			_getRepositoryFunc = getRepositoryFunc;
-			Locator = locator;
+			Container = container;
 		}
 
 		public IEnumerable<RepositoryInfo> GetSupportedDatabases()
@@ -70,9 +72,11 @@ namespace Roadkill.Core.Services
 				installerRepository.SaveSettings(siteSettings);
 
 				// Attachments handler needs re-registering
-				var appSettings = Locator.GetInstance<ApplicationSettings>();
-				var fileService = Locator.GetInstance<IFileService>();
-				AttachmentRouteHandler.RegisterRoute(appSettings, RouteTable.Routes, fileService);
+				var appSettings = Container.GetInstance<ApplicationSettings>();
+				var fileService = Container.GetInstance<IFileService>();
+
+				// TODO: NETStandard - update route handling
+				//AttachmentRouteHandler.RegisterRoute(appSettings, RouteTable.Routes, fileService);
 			}
 			catch (DatabaseException ex)
 			{
@@ -88,15 +92,15 @@ namespace Roadkill.Core.Services
 			}
 			else if (databaseName == SupportedDatabases.MySQL)
 			{
-				return new LightSpeedInstallerRepository(DataProvider.MySql5, new MySqlSchema(), connectionString);
+				throw new NotImplementedException();
 			}
 			else if (databaseName == SupportedDatabases.Postgres)
 			{
-				return new LightSpeedInstallerRepository(DataProvider.PostgreSql9, new PostgresSchema(), connectionString);
+				return new DapperInstallerRepository(new PostgresConnectionFactory(connectionString), new PostgresSchema());
 			}
 			else
 			{
-				return new LightSpeedInstallerRepository(DataProvider.SqlServer2008, new SqlServerSchema(), connectionString);
+				return new DapperInstallerRepository(new SqlConnectionFactory(connectionString), new SqlServerSchema());
 			}
 		}
 	}

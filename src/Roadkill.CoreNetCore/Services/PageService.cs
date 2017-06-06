@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Xml.Serialization;
+using Microsoft.AspNetCore.Http;
 using Roadkill.Core.Database;
 using Roadkill.Core.Cache;
 using Roadkill.Core.Mvc.ViewModels;
@@ -28,19 +30,19 @@ namespace Roadkill.Core.Services
 		private readonly ListCache _listCache;
 		private readonly PageViewModelCache _pageViewModelCache;
 		private readonly SiteCache _siteCache;
-	    private readonly TextMiddlewareBuilder _textMiddlewareBuilder;
-	    private readonly IMarkupParser _markupParser;
-	    private readonly IPluginFactory _pluginFactory;
+		private readonly TextMiddlewareBuilder _textMiddlewareBuilder;
+		private readonly IMarkupParser _markupParser;
+		private readonly IPluginFactory _pluginFactory;
 		private readonly MarkupLinkUpdater _markupLinkUpdater;
 
 		public ApplicationSettings ApplicationSettings { get; set; }
 		public ISettingsRepository SettingsRepository { get; set; }
 		public IPageRepository PageRepository { get; set; }
 
-		public PageService(ApplicationSettings settings, ISettingsRepository settingsRepository, 
-							IPageRepository pageRepository, SearchService searchService, PageHistoryService historyService, IUserContext context, 
+		public PageService(ApplicationSettings settings, ISettingsRepository settingsRepository,
+							IPageRepository pageRepository, SearchService searchService, PageHistoryService historyService, IUserContext context,
 							ListCache listCache, PageViewModelCache pageViewModelCache, SiteCache sitecache,
-                            TextMiddlewareBuilder textMiddlewareBuilder, IMarkupParser markupParser)
+							TextMiddlewareBuilder textMiddlewareBuilder, IMarkupParser markupParser)
 		{
 			_searchService = searchService;
 			_historyService = historyService;
@@ -48,9 +50,9 @@ namespace Roadkill.Core.Services
 			_listCache = listCache;
 			_pageViewModelCache = pageViewModelCache;
 			_siteCache = sitecache;
-		    _textMiddlewareBuilder = textMiddlewareBuilder;
-		    _markupParser = markupParser;
-		    _markupLinkUpdater = new MarkupLinkUpdater(markupParser);
+			_textMiddlewareBuilder = textMiddlewareBuilder;
+			_markupParser = markupParser;
+			_markupLinkUpdater = new MarkupLinkUpdater(markupParser);
 
 			ApplicationSettings = settings;
 			SettingsRepository = settingsRepository;
@@ -146,7 +148,7 @@ namespace Roadkill.Core.Services
 					{
 						IEnumerable<Page> pages = PageRepository.AllPages().OrderBy(p => p.Title);
 						pageModels = from page in pages
-									select new PageViewModel() { Id = page.Id, Title = page.Title };
+									 select new PageViewModel() { Id = page.Id, Title = page.Title };
 
 						_listCache.Add<PageViewModel>(cacheKey, pageModels);
 					}
@@ -175,7 +177,6 @@ namespace Roadkill.Core.Services
 				IEnumerable<PageViewModel> models = _listCache.Get<PageViewModel>(cacheKey);
 				if (models == null)
 				{
-				
 					IEnumerable<Page> pages = PageRepository.FindPagesCreatedBy(userName);
 					models = pages.Select(p =>
 					{
@@ -328,13 +329,12 @@ namespace Roadkill.Core.Services
 				PageViewModel pageModel = _pageViewModelCache.GetHomePage();
 				if (pageModel == null)
 				{
-
 					Page page = PageRepository.FindPagesContainingTag("homepage").FirstOrDefault(x => x.IsLocked == true);
 					if (page == null)
 					{
 						page = PageRepository.FindPagesContainingTag("homepage").FirstOrDefault();
 					}
-					
+
 					if (page != null)
 					{
 						PageContent pageContent = PageRepository.GetLatestPageContent(page.Id);
@@ -370,7 +370,6 @@ namespace Roadkill.Core.Services
 				IEnumerable<PageViewModel> models = _listCache.Get<PageViewModel>(cacheKey);
 				if (models == null)
 				{
-
 					IEnumerable<Page> pages = PageRepository.FindPagesContainingTag(tag).OrderBy(p => p.Title);
 					models = pages.Select(p =>
 					{
@@ -449,7 +448,7 @@ namespace Roadkill.Core.Services
 					}
 					else
 					{
-						// If object caching is enabled, ignore the "loadcontent" parameter as the cache will be 
+						// If object caching is enabled, ignore the "loadcontent" parameter as the cache will be
 						// used on the second call anyway, so performance isn't an issue.
 						if (ApplicationSettings.UseObjectCache)
 						{
@@ -462,7 +461,6 @@ namespace Roadkill.Core.Services
 						{
 							if (loadContent)
 							{
-
 								PageContent pageContent = PageRepository.GetLatestPageContent(page.Id);
 								PageHtml html = _textMiddlewareBuilder.Execute(pageContent.Text);
 
@@ -513,7 +511,7 @@ namespace Roadkill.Core.Services
 				// Update the cache - updating a page is expensive for the cache right now
 				// this could be improved by updating the item in the listcache instead of invalidating it
 				//
-				_pageViewModelCache.Remove(model.Id , 0);
+				_pageViewModelCache.Remove(model.Id, 0);
 
 				if (model.Tags.Contains("homepage"))
 					_pageViewModelCache.RemoveHomePage();
@@ -521,7 +519,7 @@ namespace Roadkill.Core.Services
 				_listCache.RemoveAll();
 
 				int newVersion = _historyService.MaxVersion(model.Id) + 1;
-				PageContent pageContent = PageRepository.AddNewPageContentVersion(page, model.Content, AppendIpForDemoSite(currentUser), DateTime.UtcNow, newVersion); 
+				PageContent pageContent = PageRepository.AddNewPageContentVersion(page, model.Content, AppendIpForDemoSite(currentUser), DateTime.UtcNow, newVersion);
 
 				// Update all links to this page (if it has had its title renamed). Case changes don't need any updates.
 				if (model.PreviousTitle != null && model.PreviousTitle.ToLower() != model.Title.ToLower())
@@ -609,11 +607,12 @@ namespace Roadkill.Core.Services
 			{
 				if (!_context.IsAdmin)
 				{
-					string ip = HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
-					if (string.IsNullOrEmpty(ip))
-						ip = HttpContext.Current.Request.ServerVariables["REMOTE_ADDR"];
+					// TODO: NETStandard - inject a HttpContext
+					//string ip = HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
+					//if (string.IsNullOrEmpty(ip))
+					//	ip = HttpContext.Current.Request.ServerVariables["REMOTE_ADDR"];
 
-					result = string.Format("{0} ({1})", username, ip);
+					//result = string.Format("{0} ({1})", username, ip);
 				}
 			}
 
@@ -635,7 +634,7 @@ namespace Roadkill.Core.Services
 				{
 					content.Text = _markupLinkUpdater.ReplacePageLinks(content.Text, oldTitle, newTitle);
 					PageRepository.UpdatePageContent(content);
-					
+
 					shouldClearCache = true;
 				}
 			}
@@ -708,13 +707,13 @@ namespace Roadkill.Core.Services
 			return html;
 		}
 
-        /// <summary>
-        /// Retrieves the <see cref="TextMiddlewareBuilder"/> used by this IPageService.
-        /// </summary>
-        /// <returns></returns>
-        public TextMiddlewareBuilder GetTextMiddlewareBuilder()
+		/// <summary>
+		/// Retrieves the <see cref="TextMiddlewareBuilder"/> used by this IPageService.
+		/// </summary>
+		/// <returns></returns>
+		public TextMiddlewareBuilder GetTextMiddlewareBuilder()
 		{
-		    return _textMiddlewareBuilder;
+			return _textMiddlewareBuilder;
 		}
 
 		/// <summary>

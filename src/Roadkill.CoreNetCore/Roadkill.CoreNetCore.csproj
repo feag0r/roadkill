@@ -20,6 +20,10 @@
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.2" />
     <PackageReference Include="Lucene.Net" Version="4.8.0-beta00004" />
+    <PackageReference Include="Lucene.Net.Analysis.Common" Version="4.8.0-beta00004" />
+    <PackageReference Include="Lucene.Net.Memory" Version="4.8.0-beta00004" />
+    <PackageReference Include="Lucene.Net.Queries" Version="4.8.0-beta00004" />
+    <PackageReference Include="Lucene.Net.QueryParser" Version="4.8.0-beta00004" />
     <PackageReference Include="MailKit" Version="1.16.1" />
     <PackageReference Include="Microsoft.AspNetCore" Version="1.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="1.1.2" />

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Roadkill.Core.Cache;
 using Roadkill.Core.Configuration;
 using Roadkill.Core.Database;
 using Roadkill.Core.Database.Repositories;
@@ -17,20 +18,20 @@ namespace Roadkill.Core.Services
 	{
 		private readonly IUserContext _context;
 		private readonly PageViewModelCache _pageViewModelCache;
-	    private readonly TextMiddlewareBuilder _textMiddlewareBuilder;
+		private readonly TextMiddlewareBuilder _textMiddlewareBuilder;
 
-	    public ApplicationSettings ApplicationSettings { get; set; }
+		public ApplicationSettings ApplicationSettings { get; set; }
 		public ISettingsRepository SettingsRepository { get; set; }
 		public IPageRepository PageRepository { get; set; }
 
-		public PageHistoryService(ISettingsRepository settingsRepository, IPageRepository pageRepository, IUserContext context, 
+		public PageHistoryService(ISettingsRepository settingsRepository, IPageRepository pageRepository, IUserContext context,
 			PageViewModelCache pageViewModelCache, TextMiddlewareBuilder textMiddlewareBuilder)
 		{
 			_context = context;
 			_pageViewModelCache = pageViewModelCache;
-		    _textMiddlewareBuilder = textMiddlewareBuilder;
+			_textMiddlewareBuilder = textMiddlewareBuilder;
 
-		    SettingsRepository = settingsRepository;
+			SettingsRepository = settingsRepository;
 			PageRepository = pageRepository;
 		}
 
@@ -46,7 +47,7 @@ namespace Roadkill.Core.Services
 			{
 				IEnumerable<PageContent> contentList = PageRepository.FindPageContentsByPageId(pageId);
 				IEnumerable<PageHistoryViewModel> historyList = from p in contentList
-														  select new PageHistoryViewModel(p);
+																select new PageHistoryViewModel(p);
 
 				return historyList.OrderByDescending(h => h.VersionNumber);
 			}
