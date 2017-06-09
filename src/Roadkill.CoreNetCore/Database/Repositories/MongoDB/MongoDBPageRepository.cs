@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using MongoDB.Driver;
-using MongoDB.Driver.Builders;
-using MongoDB.Driver.Linq;
 using PluginSettings = Roadkill.Core.Plugins.Settings;
 
 namespace Roadkill.Core.Database.MongoDB
@@ -46,14 +44,13 @@ namespace Roadkill.Core.Database.MongoDB
 		public void Delete<T>(T obj) where T : IDataStoreEntity
 		{
 			IMongoCollection<T> collection = GetCollection<T>();
-			IMongoQuery query = Query.EQ("ObjectId", obj.ObjectId);
-			collection.Remove(query);
+			collection.FindOneAndDelete(x => x.ObjectId == obj.ObjectId);
 		}
 
 		public void DeleteAll<T>() where T : IDataStoreEntity
 		{
 			IMongoCollection<T> collection = GetCollection<T>();
-			collection.RemoveAll();
+			collection.DeleteMany(x => true);
 		}
 
 		public IQueryable<T> Queryable<T>() where T : IDataStoreEntity
