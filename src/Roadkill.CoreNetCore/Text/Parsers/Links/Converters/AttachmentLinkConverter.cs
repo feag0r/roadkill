@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc.Routing;
 using Roadkill.Core.Configuration;
 
 namespace Roadkill.Core.Text.Parsers.Links.Converters
@@ -5,6 +6,8 @@ namespace Roadkill.Core.Text.Parsers.Links.Converters
 	public class AttachmentLinkConverter : IHtmlLinkTagConverter
 	{
 		private readonly ApplicationSettings _applicationSettings;
+
+		// TODO: NETStandard - replace urlhelper to IUrlHelper
 		private readonly UrlHelper _urlHelper;
 
 		public AttachmentLinkConverter(ApplicationSettings applicationSettings, UrlHelper urlHelper)
@@ -41,7 +44,7 @@ namespace Roadkill.Core.Text.Parsers.Links.Converters
 			}
 			else if (lowerHref.StartsWith("~/"))
 			{
-				// Remove the ~ 
+				// Remove the ~
 				href = href.Remove(0, 1);
 			}
 

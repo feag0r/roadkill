@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Roadkill.Core.Configuration;
 using Roadkill.Core.Database;
 using Roadkill.Core.Mvc.ViewModels;
@@ -19,7 +21,10 @@ namespace Roadkill.Core.Text.Parsers.Links
 	{
 		private readonly IPageRepository _pageRepository;
 		private readonly ApplicationSettings _applicationSettings;
+
+		// TODO: NETStandard - replace urlhelper to IUrlHelper
 		private readonly UrlHelper _urlHelper;
+
 		private readonly List<string> _externalLinkPrefixes = new List<string>()
 		{
 			"http://",
@@ -50,7 +55,7 @@ namespace Roadkill.Core.Text.Parsers.Links
 		{
 			if (IsExternalLink(htmlLinkTag.OriginalHref))
 			{
-				// Add the external-link class to all outward bound links, 
+				// Add the external-link class to all outward bound links,
 				// except for anchors pointing to <a name=""> tags on the current page.
 				// (# links shouldn't be treated as internal links)
 				if (!htmlLinkTag.OriginalHref.StartsWith("#"))
@@ -97,7 +102,7 @@ namespace Roadkill.Core.Text.Parsers.Links
 			}
 			else if (lowerHref.StartsWith("~/"))
 			{
-				// Remove the ~ 
+				// Remove the ~
 				href = href.Remove(0, 1);
 			}
 

@@ -1,6 +1,8 @@
 ﻿// Don't change the namespace to "Roadkill.Core.Configuration" it will break older web.config files
 
+using System;
 using System.Collections.Generic;
+using Roadkill.Core.Security;
 
 namespace Roadkill.Core
 {
@@ -9,7 +11,7 @@ namespace Roadkill.Core
 	/// </summary>
 	public class RoadkillSection
 	{
-		private Dictionary<string,string> _fakeDictionary = new Dictionary<string, string>();
+		private Dictionary<string, string> _fakeDictionary = new Dictionary<string, string>();
 
 		/// <summary>
 		/// Gets or sets the name of the admin role.
@@ -17,7 +19,7 @@ namespace Roadkill.Core
 		public string AdminRoleName
 		{
 			get { return (string)_fakeDictionary["adminRoleName"]; }
-			set { _fakeDictionary["adminRoleName"] = value; }
+			set { _fakeDictionary["adminRoleName"] = value.ToString(); }
 		}
 
 		/// <summary>
@@ -26,7 +28,7 @@ namespace Roadkill.Core
 		public string ApiKeys
 		{
 			get { return (string)_fakeDictionary["apiKeys"]; }
-			set { _fakeDictionary["apiKeys"] = value; }
+			set { _fakeDictionary["apiKeys"] = value.ToString(); }
 		}
 
 		/// <summary>
@@ -35,7 +37,7 @@ namespace Roadkill.Core
 		public string AttachmentsFolder
 		{
 			get { return (string)_fakeDictionary["attachmentsFolder"]; }
-			set { _fakeDictionary["attachmentsFolder"] = value; }
+			set { _fakeDictionary["attachmentsFolder"] = value.ToString(); }
 		}
 
 		/// <summary>
@@ -44,9 +46,8 @@ namespace Roadkill.Core
 		public string AttachmentsRoutePath
 		{
 			get { return (string)_fakeDictionary["attachmentsRoutePath"]; }
-			set { _fakeDictionary["attachmentsRoutePath"] = value; }
+			set { _fakeDictionary["attachmentsRoutePath"] = value.ToString(); }
 		}
-
 
 		/// <summary>
 		/// Gets or sets the name of the connection string in the connectionstrings section.
@@ -54,7 +55,7 @@ namespace Roadkill.Core
 		public string ConnectionStringName
 		{
 			get { return (string)_fakeDictionary["connectionStringName"]; }
-			set { _fakeDictionary["connectionStringName"] = value; }
+			set { _fakeDictionary["connectionStringName"] = value.ToString(); }
 		}
 
 		/// <summary>
@@ -63,7 +64,7 @@ namespace Roadkill.Core
 		public string EditorRoleName
 		{
 			get { return (string)_fakeDictionary["editorRoleName"]; }
-			set { _fakeDictionary["editorRoleName"] = value; }
+			set { _fakeDictionary["editorRoleName"] = value.ToString(); }
 		}
 
 		/// <summary>
@@ -71,8 +72,8 @@ namespace Roadkill.Core
 		/// </summary>
 		public bool IgnoreSearchIndexErrors
 		{
-			get { return (bool)_fakeDictionary["ignoreSearchIndexErrors"]; }
-			set { _fakeDictionary["ignoreSearchIndexErrors"] = value; }
+			get { return Convert.ToBoolean(_fakeDictionary["ignoreSearchIndexErrors"]); }
+			set { _fakeDictionary["ignoreSearchIndexErrors"] = value.ToString(); }
 		}
 
 		/// <summary>
@@ -80,8 +81,8 @@ namespace Roadkill.Core
 		/// </summary>
 		public bool Installed
 		{
-			get { return (bool)_fakeDictionary["installed"]; }
-			set { _fakeDictionary["installed"] = value; }
+			get { return Convert.ToBoolean(_fakeDictionary["installed"]); }
+			set { _fakeDictionary["installed"] = value.ToString(); }
 		}
 
 		/// <summary>
@@ -90,8 +91,8 @@ namespace Roadkill.Core
 		/// </summary>
 		public bool IsPublicSite
 		{
-			get { return (bool)_fakeDictionary["isPublicSite"]; }
-			set { _fakeDictionary["isPublicSite"] = value; }
+			get { return Convert.ToBoolean(_fakeDictionary["isPublicSite"]); }
+			set { _fakeDictionary["isPublicSite"] = value.ToString(); }
 		}
 
 		/// <summary>
@@ -100,7 +101,7 @@ namespace Roadkill.Core
 		public string LdapConnectionString
 		{
 			get { return (string)_fakeDictionary["ldapConnectionString"]; }
-			set { _fakeDictionary["ldapConnectionString"] = value; }
+			set { _fakeDictionary["ldapConnectionString"] = value.ToString(); }
 		}
 
 		/// <summary>
@@ -109,7 +110,7 @@ namespace Roadkill.Core
 		public string LdapUsername
 		{
 			get { return (string)_fakeDictionary["ldapUsername"]; }
-			set { _fakeDictionary["ldapUsername"] = value; }
+			set { _fakeDictionary["ldapUsername"] = value.ToString(); }
 		}
 
 		/// <summary>
@@ -118,7 +119,7 @@ namespace Roadkill.Core
 		public string LdapPassword
 		{
 			get { return (string)_fakeDictionary["ldapPassword"]; }
-			set { _fakeDictionary["ldapPassword"] = value; }
+			set { _fakeDictionary["ldapPassword"] = value.ToString(); }
 		}
 
 		/// <summary>
@@ -127,8 +128,8 @@ namespace Roadkill.Core
 		/// </summary>
 		public bool UseHtmlWhiteList
 		{
-			get { return (bool)_fakeDictionary["useHtmlWhiteList"]; }
-			set { _fakeDictionary["useHtmlWhiteList"] = value; }
+			get { return Convert.ToBoolean(_fakeDictionary["useHtmlWhiteList"]); }
+			set { _fakeDictionary["useHtmlWhiteList"] = value.ToString(); }
 		}
 
 		/// <summary>
@@ -136,8 +137,8 @@ namespace Roadkill.Core
 		/// </summary>
 		public bool UseWindowsAuthentication
 		{
-			get { return (bool)_fakeDictionary["useWindowsAuthentication"]; }
-			set { _fakeDictionary["useWindowsAuthentication"] = value; }
+			get { return Convert.ToBoolean(_fakeDictionary["useWindowsAuthentication"]); }
+			set { _fakeDictionary["useWindowsAuthentication"] = value.ToString(); }
 		}
 
 		/// <summary>
@@ -147,7 +148,7 @@ namespace Roadkill.Core
 		public string UserServiceType
 		{
 			get { return (string)_fakeDictionary["userServiceType"]; }
-			set { _fakeDictionary["userServiceType"] = value; }
+			set { _fakeDictionary["userServiceType"] = value.ToString(); }
 		}
 
 		/// <summary>
@@ -155,8 +156,8 @@ namespace Roadkill.Core
 		/// </summary>
 		public bool UseObjectCache
 		{
-			get { return (bool)_fakeDictionary["useObjectCache"]; }
-			set { _fakeDictionary["useObjectCache"] = value; }
+			get { return Convert.ToBoolean(_fakeDictionary["useObjectCache"]); }
+			set { _fakeDictionary["useObjectCache"] = value.ToString(); }
 		}
 
 		/// <summary>
@@ -164,16 +165,16 @@ namespace Roadkill.Core
 		/// </summary>
 		public bool UseBrowserCache
 		{
-			get { return (bool)_fakeDictionary["useBrowserCache"]; }
-			set { _fakeDictionary["useBrowserCache"] = value; }
+			get { return Convert.ToBoolean(_fakeDictionary["useBrowserCache"]); }
+			set { _fakeDictionary["useBrowserCache"] = value.ToString(); }
 		}
 
 		/// <summary>
-		/// Gets a value indicating whether the <see cref="T:System.Configuration.ConfigurationElement"/> object is read-only,
+		/// Gets a value.ToString() indicating whether the <see cref="T:System.Configuration.ConfigurationElement"/> object is read-only,
 		/// and can therefore be saved back to disk.
 		/// </summary>
 		/// <returns>This returns true.</returns>
-		public override bool IsReadOnly()
+		public bool IsReadOnly()
 		{
 			return false;
 		}
@@ -184,7 +185,7 @@ namespace Roadkill.Core
 		internal string DatabaseName
 		{
 			get { return (string)_fakeDictionary["databaseName"]; }
-			set { _fakeDictionary["databaseName"] = value; }
+			set { _fakeDictionary["databaseName"] = value.ToString(); }
 		}
 
 		/// <summary>
@@ -192,8 +193,8 @@ namespace Roadkill.Core
 		/// </summary>
 		public bool UseAzureFileStorage
 		{
-			get { return (bool)_fakeDictionary["useAzureFileStorage"]; }
-			set { _fakeDictionary["useAzureFileStorage"] = value; }
+			get { return Convert.ToBoolean(_fakeDictionary["useAzureFileStorage"]); }
+			set { _fakeDictionary["useAzureFileStorage"] = value.ToString(); }
 		}
 
 		/// <summary>
@@ -202,7 +203,7 @@ namespace Roadkill.Core
 		public string AzureConnectionString
 		{
 			get { return (string)_fakeDictionary["azureConnectionString"]; }
-			set { _fakeDictionary["azureConnectionString"] = value; }
+			set { _fakeDictionary["azureConnectionString"] = value.ToString(); }
 		}
 
 		/// <summary>
@@ -211,7 +212,7 @@ namespace Roadkill.Core
 		public string AzureContainer
 		{
 			get { return (string)_fakeDictionary["azureContainer"]; }
-			set { _fakeDictionary["azureContainer"] = value; }
+			set { _fakeDictionary["azureContainer"] = value.ToString(); }
 		}
 	}
 }

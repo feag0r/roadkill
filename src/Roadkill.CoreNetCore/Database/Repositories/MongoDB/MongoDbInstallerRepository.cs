@@ -13,16 +13,13 @@ namespace Roadkill.Core.Database.MongoDB
 			ConnectionString = connectionString;
 		}
 
-		private MongoCollection<T> GetCollection<T>()
+		private IMongoCollection<T> GetCollection<T>()
 		{
 			try
 			{
-				string connectionString = ConnectionString;
-
-				string databaseName = MongoUrl.Create(connectionString).DatabaseName;
-				MongoClient client = new MongoClient(connectionString);
-				MongoServer server = client.GetServer();
-				MongoDatabase database = server.GetDatabase(databaseName);
+				string databaseName = MongoUrl.Create(ConnectionString).DatabaseName;
+				MongoClient client = new MongoClient(ConnectionString);
+				IMongoDatabase database = client.GetDatabase(databaseName, new MongoDatabaseSettings());
 
 				return database.GetCollection<T>(typeof(T).Name);
 			}
@@ -38,8 +35,7 @@ namespace Roadkill.Core.Database.MongoDB
 			{
 				string databaseName = MongoUrl.Create(ConnectionString).DatabaseName;
 				MongoClient client = new MongoClient(ConnectionString);
-				MongoServer server = client.GetServer();
-				MongoDatabase database = server.GetDatabase(databaseName);
+				IMongoDatabase database = client.GetDatabase(databaseName, new MongoDatabaseSettings());
 
 				database.DropCollection(typeof(PageContent).Name);
 				database.DropCollection(typeof(Page).Name);
@@ -71,8 +67,8 @@ namespace Roadkill.Core.Database.MongoDB
 			{
 				string databaseName = MongoUrl.Create(ConnectionString).DatabaseName;
 				MongoClient client = new MongoClient(ConnectionString);
-				MongoServer server = client.GetServer();
-				MongoDatabase database = server.GetDatabase(databaseName);
+				IMongoDatabase database = client.GetDatabase(databaseName, new MongoDatabaseSettings());
+
 				database.DropCollection("Page");
 				database.DropCollection("PageContent");
 				database.DropCollection("User");
@@ -96,8 +92,8 @@ namespace Roadkill.Core.Database.MongoDB
 
 		public void SaveOrUpdate<T>(T obj) where T : IDataStoreEntity
 		{
-			MongoCollection<T> collection = GetCollection<T>();
-			collection.Save<T>(obj);
+			IMongoCollection<T> collection = GetCollection<T>();
+			collection.FindOneAndReplace<T>(x => x.ObjectId == obj.ObjectId, obj);
 		}
 
 		public void Dispose()

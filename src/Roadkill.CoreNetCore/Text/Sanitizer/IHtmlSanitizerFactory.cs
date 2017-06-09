@@ -1,7 +1,9 @@
-﻿namespace Roadkill.Core.Text.Sanitizer
+﻿using Ganss.XSS;
+
+namespace Roadkill.Core.Text.Sanitizer
 {
-    public interface IHtmlSanitizerFactory
-    {
+	public interface IHtmlSanitizerFactory
+	{
 		IHtmlSanitizer CreateHtmlSanitizer();
-    }
+	}
 }

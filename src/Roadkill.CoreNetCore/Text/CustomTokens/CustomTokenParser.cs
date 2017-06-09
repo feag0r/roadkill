@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Xml.Serialization;
 using Roadkill.Core.Configuration;
 using Roadkill.Core.Logging;
 
@@ -17,10 +18,7 @@ namespace Roadkill.Core.Text.CustomTokens
 
 		public static bool CacheTokensFile { get; set; }
 
-		public IEnumerable<TextToken> Tokens
-		{
-			get { return _tokens;  }
-		}
+		public IEnumerable<TextToken> Tokens => _tokens;
 
 		static CustomTokenParser()
 		{
@@ -67,13 +65,13 @@ namespace Roadkill.Core.Text.CustomTokens
 				// Catch bad regexes
 				try
 				{
-					Regex regex = new Regex(token.SearchRegex,RegexOptions.Compiled | RegexOptions.Singleline);
+					Regex regex = new Regex(token.SearchRegex, RegexOptions.Compiled | RegexOptions.Singleline);
 					token.CachedRegex = regex;
 				}
 				catch (ArgumentException e)
 				{
 					Log.Warn(e, "There was an error in search regex for the token {0}", token.Name);
-				}				
+				}
 			}
 		}
 

@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using System.Xml.Serialization;
 
 namespace Roadkill.Core.Text.CustomTokens
 {
@@ -17,7 +18,7 @@ namespace Roadkill.Core.Text.CustomTokens
 		/// The description of the token, for use as in-line help.
 		/// </summary>
 		public string Description { get; set; }
-		
+
 		/// <summary>
 		/// The regex to search the text with. This is a single line, compiled regex.
 		/// </summary>

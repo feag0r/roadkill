@@ -1,7 +1,16 @@
-﻿using Roadkill.Core.Cache;
+﻿using AngleSharp.Dom;
+using AngleSharp.Dom.Html;
+using AngleSharp.Parser.Html;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.Extensions.DependencyInjection;
+using Roadkill.Core.Cache;
 using Roadkill.Core.Configuration;
 using Roadkill.Core.Database.Repositories;
 using Roadkill.Core.Text.Parsers;
+using Roadkill.CoreNetCore.Localization;
 
 namespace Roadkill.Core.Text.Menu
 {
@@ -18,13 +27,15 @@ namespace Roadkill.Core.Text.Menu
 		private readonly ISettingsRepository _settingsRepository;
 		private readonly SiteCache _siteCache;
 		private readonly IUserContext _userContext;
+		private readonly HttpContext _httpContext;
 
-		public MenuParser(IMarkupParser markupParser, ISettingsRepository settingsRepository, SiteCache siteCache, IUserContext userContext)
+		public MenuParser(IMarkupParser markupParser, ISettingsRepository settingsRepository, SiteCache siteCache, IUserContext userContext, HttpContext httpContext)
 		{
 			_markupParser = markupParser;
 			_settingsRepository = settingsRepository;
 			_siteCache = siteCache;
 			_userContext = userContext;
+			_httpContext = httpContext;
 		}
 
 		public string GetMenu()
@@ -78,7 +89,7 @@ namespace Roadkill.Core.Text.Menu
 
 		/// <summary>
 		/// Support for the following tokens:
-		/// 
+		///
 		/// [Categories]
 		/// [AllPages]
 		/// [MainPage]
@@ -98,16 +109,20 @@ namespace Roadkill.Core.Text.Menu
 			string manageFiles = CreateAnchorTag("/filemanager", SiteStrings.FileManager_Title);
 			string siteSettings = CreateAnchorTag("/settings", SiteStrings.Navigation_SiteSettings);
 
-			if (HttpContext.Current != null)
+			if (_httpContext != null)
 			{
-				UrlHelper urlHelper = new UrlHelper(HttpContext.Current.Request.RequestContext);
+				// TODO: NETStandard - replace urlhelpers to this
+				var urlHelperFactory = _httpContext.RequestServices.GetService<IUrlHelperFactory>();
+				var actionAccessor = _httpContext.RequestServices.GetService<IActionContextAccessor>();
+
+				IUrlHelper urlHelper = urlHelperFactory.GetUrlHelper(actionAccessor.ActionContext);
 
 				categories = CreateAnchorTag(urlHelper.Action("AllTags", "Pages"), SiteStrings.Navigation_Categories);
 				allPages = CreateAnchorTag(urlHelper.Action("AllPages", "Pages"), SiteStrings.Navigation_AllPages);
 				mainPage = CreateAnchorTag(urlHelper.Action("Index", "Home"), SiteStrings.Navigation_MainPage);
 				newpage = CreateAnchorTag(urlHelper.Action("New", "Pages"), SiteStrings.Navigation_NewPage);
 				manageFiles = CreateAnchorTag(urlHelper.Action("Index", "FileManager"), SiteStrings.FileManager_Title);
-				siteSettings = CreateAnchorTag(urlHelper.Action( "Index", "Settings"), SiteStrings.Navigation_SiteSettings);
+				siteSettings = CreateAnchorTag(urlHelper.Action("Index", "Settings"), SiteStrings.Navigation_SiteSettings);
 			}
 
 			if (!_userContext.IsLoggedIn)
@@ -152,7 +167,7 @@ namespace Roadkill.Core.Text.Menu
 				foreach (IElement element in ulNodes)
 				{
 					if (string.IsNullOrEmpty(element.TextContent) || string.IsNullOrEmpty(element.TextContent.Trim()) ||
-					    string.IsNullOrEmpty(element.InnerHtml) || string.IsNullOrEmpty(element.InnerHtml.Trim()))
+						string.IsNullOrEmpty(element.InnerHtml) || string.IsNullOrEmpty(element.InnerHtml.Trim()))
 					{
 						element.Remove();
 					}
@@ -168,7 +183,7 @@ namespace Roadkill.Core.Text.Menu
 				foreach (IElement element in liNodes)
 				{
 					if (string.IsNullOrEmpty(element.TextContent) || string.IsNullOrEmpty(element.TextContent.Trim()) ||
-					    string.IsNullOrEmpty(element.InnerHtml) || string.IsNullOrEmpty(element.InnerHtml.Trim()))
+						string.IsNullOrEmpty(element.InnerHtml) || string.IsNullOrEmpty(element.InnerHtml.Trim()))
 					{
 						element.Remove();
 					}

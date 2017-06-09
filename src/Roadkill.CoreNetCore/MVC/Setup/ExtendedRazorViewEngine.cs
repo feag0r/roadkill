@@ -34,5 +34,5 @@ namespace Roadkill.Core.Mvc.Setup
 
 		//		PartialViewLocationFormats = existingPaths.ToArray();
 		//	}
-		//}
 	}
+}

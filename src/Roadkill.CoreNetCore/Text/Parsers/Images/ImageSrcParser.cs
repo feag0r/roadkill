@@ -1,5 +1,6 @@
 using System;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Roadkill.Core.Configuration;
 
 namespace Roadkill.Core.Text.Parsers.Images
@@ -8,6 +9,8 @@ namespace Roadkill.Core.Text.Parsers.Images
 	{
 		private readonly ApplicationSettings _applicationSettings;
 		private static readonly Regex _imgFileRegex = new Regex("^File:", RegexOptions.IgnoreCase);
+
+		// TODO: NETStandard - replace urlhelper to IUrlHelper
 		private readonly UrlHelper _urlHelper;
 
 		public ImageSrcParser(ApplicationSettings applicationSettings, UrlHelper urlHelper)

@@ -2,13 +2,13 @@
 
 namespace Roadkill.Core.Text.Parsers.Links
 {
-    /// <summary>
-    /// Responsible for converting internal links (page names) to their real MVC path,
-    /// and renaming all links in markdown when a page title changes.
-    /// </summary>
+	/// <summary>
+	/// Responsible for converting internal links (page names) to their real MVC path,
+	/// and renaming all links in markdown when a page title changes.
+	/// </summary>
 	public class MarkupLinkUpdater
 	{
-		private IMarkupParser _parser;
+		private readonly IMarkupParser _parser;
 
 		public MarkupLinkUpdater(IMarkupParser parser)
 		{
@@ -48,7 +48,7 @@ namespace Roadkill.Core.Text.Parsers.Links
 			string customRegex = GetRegexForTitle(oldPageName);
 			Regex regex = new Regex(customRegex, RegexOptions.IgnoreCase);
 
-			return regex.Replace(text, (System.Text.RegularExpressions.Match match) => 
+			return regex.Replace(text, (System.Text.RegularExpressions.Match match) =>
 			{
 				return OnLinkMatched(match, newPageName);
 			});

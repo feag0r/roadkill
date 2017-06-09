@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using Markdig;
+using Markdig.Renderers;
+using Markdig.Syntax;
 using Roadkill.Core.Text.Parsers.Images;
 using Roadkill.Core.Text.Parsers.Links;
 
@@ -17,9 +20,9 @@ namespace Roadkill.Core.Text.Parsers.Markdig
 				return "";
 
 			var pipeline = new MarkdownPipelineBuilder();
-            MarkdownPipeline markdownPipeline = pipeline.UseAdvancedExtensions().Build();
+			MarkdownPipeline markdownPipeline = pipeline.UseAdvancedExtensions().Build();
 
-			var doc = Markdown.Parse(markdown, markdownPipeline);
+			MarkdownObject doc = Markdown.Parse(markdown, markdownPipeline);
 			var walker = new MarkdigImageAndLinkWalker((e) =>
 				{
 					if (ImageParsed != null)
