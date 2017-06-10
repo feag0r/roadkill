@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Web.Optimization;
 using Roadkill.Core.Configuration;
 
 namespace Roadkill.Core.Mvc

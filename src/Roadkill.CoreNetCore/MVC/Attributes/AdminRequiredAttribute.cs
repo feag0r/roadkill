@@ -31,6 +31,8 @@ namespace Roadkill.Core.Mvc.Attributes
 		[SetterProperty]
 		public IAuthorizationProvider AuthorizationProvider { get; set; }
 
+		// TODO: NETStandard - rewrite for MVC 6
+
 		/// <summary>
 		/// Provides an entry point for custom authorization checks.
 		/// </summary>
@@ -39,13 +41,13 @@ namespace Roadkill.Core.Mvc.Attributes
 		/// true if the user is in the role name specified by the roadkill web.config adminRoleName setting or if this is blank; otherwise, false.
 		/// </returns>
 		/// <exception cref="T:System.ArgumentNullException">The <paramref name="httpContext"/> parameter is null.</exception>
-		protected override bool AuthorizeCore(HttpContextBase httpContext)
-		{
-			if (AuthorizationProvider == null)
-				throw new SecurityException("The AuthorizationProvider property has not been set for AdminRequiredAttribute.", null);
+		//protected override bool AuthorizeCore(HttpContextBase httpContext)
+		//{
+		//	if (AuthorizationProvider == null)
+		//		throw new SecurityException("The AuthorizationProvider property has not been set for AdminRequiredAttribute.", null);
 
-			IPrincipal principal = httpContext.User;
-			return AuthorizationProvider.IsAdmin(principal);
-		}
+		//	IPrincipal principal = httpContext.User;
+		//	return AuthorizationProvider.IsAdmin(principal);
+		//}
 	}
 }

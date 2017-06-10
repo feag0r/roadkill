@@ -138,7 +138,9 @@ namespace Roadkill.Core.Mvc.Controllers
 			try
 			{
 				string destinationFolder = Request.Form["destination_folder"];
-				string fileName = _fileService.Upload(destinationFolder, no);
+
+				// TODO: NETStandard - find how to get an IFormFile
+				string fileName = "";//_fileService.Upload(destinationFolder, no);
 
 				return new ContentResult()
 				{

@@ -1,4 +1,6 @@
-﻿using Roadkill.Core.Configuration;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Roadkill.Core.Configuration;
 using Roadkill.Core.Database;
 using Roadkill.Core.Plugins;
 using Roadkill.Core.Text.CustomTokens;
@@ -52,12 +54,13 @@ namespace Roadkill.Core.DependencyResolution.StructureMap.Registries
 					builder.Use(new TextPluginAfterParseMiddleware(textPluginRunner));
 
 					return builder;
-
 				}).Singleton();
 		}
 
 		private MarkdigParser GetMarkdigParser(IContext ctx)
 		{
+			// TODO: NETStandard - change the factory to take an IUrlHelper
+
 			var pageRepository = ctx.GetInstance<IPageRepository>();
 			var applicationSettings = ctx.GetInstance<ApplicationSettings>();
 			var urlHelper = ctx.GetInstance<UrlHelper>();

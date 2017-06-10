@@ -651,7 +651,8 @@ namespace Roadkill.Core.Services
 		/// </summary>
 		public string GetMenu(IUserContext userContext)
 		{
-			MenuParser parser = new MenuParser(_markupParser, SettingsRepository, _siteCache, userContext);
+			// TODO: NETStandard - overload ctor here
+			MenuParser parser = null;//new MenuParser(_markupParser, SettingsRepository, _siteCache, userContext);
 
 			// TODO: turn this into a theme-based bit of template HTML
 			StringBuilder builder = new StringBuilder();
@@ -668,7 +669,8 @@ namespace Roadkill.Core.Services
 		/// </summary>
 		public string GetBootStrapNavMenu(IUserContext userContext)
 		{
-			MenuParser parser = new MenuParser(_markupParser, SettingsRepository, _siteCache, userContext);
+			// TODO: NETStandard - overload ctor
+			MenuParser parser = null;//new MenuParser(_markupParser, SettingsRepository, _siteCache, userContext);
 
 			// TODO: turn this into a theme-based bit of template HTML
 			StringBuilder builder = new StringBuilder();

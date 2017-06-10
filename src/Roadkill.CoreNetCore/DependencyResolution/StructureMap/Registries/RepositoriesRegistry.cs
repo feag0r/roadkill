@@ -16,11 +16,11 @@ namespace Roadkill.Core.DependencyResolution.StructureMap.Registries
 
 		private void ScanTypes(IAssemblyScanner scanner)
 		{
-            scanner.TheCallingAssembly();
-            scanner.SingleImplementationsOfInterface();
-            scanner.WithDefaultConventions();
+			scanner.TheCallingAssembly();
+			scanner.SingleImplementationsOfInterface();
+			scanner.WithDefaultConventions();
 
-            scanner.AddAllTypesOf<ISettingsRepository>();
+			scanner.AddAllTypesOf<ISettingsRepository>();
 			scanner.AddAllTypesOf<IUserRepository>();
 			scanner.AddAllTypesOf<IPageRepository>();
 		}
@@ -32,8 +32,9 @@ namespace Roadkill.Core.DependencyResolution.StructureMap.Registries
 				.Singleton()
 				.Use<RepositoryFactory>();
 
+			// TODO: NETStandard - add new Structuremap package for hybrid usage
 			For<ISettingsRepository>()
-				.HybridHttpOrThreadLocalScoped()
+				//.HybridHttpOrThreadLocalScoped()
 				.Use("ISettingsRepository", x =>
 				{
 					ApplicationSettings appSettings = x.GetInstance<ApplicationSettings>();
@@ -42,7 +43,7 @@ namespace Roadkill.Core.DependencyResolution.StructureMap.Registries
 				});
 
 			For<IUserRepository>()
-				.HybridHttpOrThreadLocalScoped()
+				//.HybridHttpOrThreadLocalScoped()
 				.Use("IUserRepository", x =>
 				{
 					ApplicationSettings appSettings = x.GetInstance<ApplicationSettings>();
@@ -51,7 +52,7 @@ namespace Roadkill.Core.DependencyResolution.StructureMap.Registries
 				});
 
 			For<IPageRepository>()
-				.HybridHttpOrThreadLocalScoped()
+				//.HybridHttpOrThreadLocalScoped()
 				.Use("IPageRepository", x =>
 				{
 					ApplicationSettings appSettings = x.GetInstance<ApplicationSettings>();

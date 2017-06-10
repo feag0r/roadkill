@@ -57,7 +57,7 @@ namespace Roadkill.Core.Database.Repositories.Dapper
 				}
 			}
 
-			throw new DataException("Inserting new page failed (no id)");
+			throw new DatabaseException("Inserting new page failed (no id)", null);
 		}
 
 		public PageContent AddNewPageContentVersion(Page page, string text, string editedBy, DateTime editedOn, int version)
@@ -207,7 +207,7 @@ namespace Roadkill.Core.Database.Repositories.Dapper
 				string sql = $"select * from {PagesTableName} ";
 				sql += "where tags like @tag";
 
-				return connection.Query<Page>(sql, new { tag = "%" +tag+ "%" });
+				return connection.Query<Page>(sql, new { tag = "%" + tag + "%" });
 			}
 		}
 
@@ -226,7 +226,6 @@ namespace Roadkill.Core.Database.Repositories.Dapper
 				{
 					pageContent.Page = page;
 					return pageContent;
-
 				}, new { pageId = pageId });
 
 				return results;
@@ -248,7 +247,6 @@ namespace Roadkill.Core.Database.Repositories.Dapper
 				{
 					pageContent.Page = page;
 					return pageContent;
-
 				}, new { username = username });
 
 				return results;
@@ -266,13 +264,12 @@ namespace Roadkill.Core.Database.Repositories.Dapper
 				sql += "where p.id = @pageId ";
 				sql += "order by pc.editedon desc";
 
-				IEnumerable<PageContent> results = connection.Query<Page, PageContent, PageContent>(sql, 
+				IEnumerable<PageContent> results = connection.Query<Page, PageContent, PageContent>(sql,
 				(page, pageContent) =>
 				{
 					pageContent.Page = page;
 					return pageContent;
-
-				}, new {pageId = pageId});
+				}, new { pageId = pageId });
 
 				return results.FirstOrDefault();
 			}
@@ -315,7 +312,6 @@ namespace Roadkill.Core.Database.Repositories.Dapper
 				{
 					pageContent.Page = page;
 					return pageContent;
-
 				}, new { id = id });
 
 				return results.FirstOrDefault();
@@ -337,7 +333,6 @@ namespace Roadkill.Core.Database.Repositories.Dapper
 				{
 					pageContent.Page = page;
 					return pageContent;
-
 				}, new { id = id, versionNumber = versionNumber });
 
 				return results.FirstOrDefault();
@@ -367,7 +362,7 @@ namespace Roadkill.Core.Database.Repositories.Dapper
 					sql = $"insert into {PagesTableName} ";
 					sql += "(title, tags, createdby, createdon, islocked, modifiedby, modifiedon) ";
 					sql += "values (@Title, @Tags, @CreatedBy, @CreatedOn, @IsLocked, @ModifiedBy, @ModifiedOn)";
-					sql += " " +DbConnectionFactory.GetAutoIdentitySqlSuffix();
+					sql += " " + DbConnectionFactory.GetAutoIdentitySqlSuffix();
 
 					int pageId = connection.ExecuteScalar<int>(sql, page);
 					page.Id = pageId;

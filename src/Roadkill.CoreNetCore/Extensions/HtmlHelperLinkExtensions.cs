@@ -156,7 +156,7 @@ namespace Roadkill.Core.Extensions
 		public static IHtmlContent PageLink(this IHtmlHelper helper, string linkText, string pageTitle, object htmlAttributes, string prefix, string suffix, IPageService pageService = null)
 		{
 			if (pageService == null)
-				pageService = LocatorStartup.Container.Container.GetInstance<IPageService>();
+				pageService = LocatorStartup.Container.GetInstance<IPageService>();
 
 			PageViewModel model = pageService.FindByTitle(pageTitle);
 			if (model != null)

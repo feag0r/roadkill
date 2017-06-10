@@ -5,21 +5,21 @@ using StructureMap.Graph;
 
 namespace Roadkill.Core.DependencyResolution.StructureMap.Registries
 {
-    public class ServicesRegistry : Registry
+	public class ServicesRegistry : Registry
 	{
 		public ServicesRegistry()
 		{
 			Scan(ScanTypes);
 			ConfigureInstances();
-        }
+		}
 
 		private void ScanTypes(IAssemblyScanner scanner)
 		{
-            scanner.TheCallingAssembly();
-            scanner.SingleImplementationsOfInterface();
-            scanner.WithDefaultConventions();
+			scanner.TheCallingAssembly();
+			scanner.SingleImplementationsOfInterface();
+			scanner.WithDefaultConventions();
 
-            scanner.AddAllTypesOf<IPageService>();
+			scanner.AddAllTypesOf<IPageService>();
 			scanner.AddAllTypesOf<ISearchService>();
 			scanner.AddAllTypesOf<ISettingsService>();
 			scanner.AddAllTypesOf<IFileService>();
@@ -29,22 +29,23 @@ namespace Roadkill.Core.DependencyResolution.StructureMap.Registries
 		private void ConfigureInstances()
 		{
 			// Services
-			For<IPageService>().HybridHttpOrThreadLocalScoped().Use<PageService>();
-			For<IInstallationService>().HybridHttpOrThreadLocalScoped().Use<InstallationService>();
+			// TODO: NETStandard - use Structuremap project
+			//For<IPageService>().HybridHttpOrThreadLocalScoped().Use<PageService>();
+			//For<IInstallationService>().HybridHttpOrThreadLocalScoped().Use<InstallationService>();
 
 			// File service
-		    For<IFileService>()
-		        .HybridHttpOrThreadLocalScoped()
-		        .Use<IFileService>("IFileService", ctx =>
-                {
-                    var appSettings = ctx.GetInstance<ApplicationSettings>();
-                    if (appSettings.UseAzureFileStorage)
-                    {
-                        return ctx.GetInstance<AzureFileService>();
-                    }
+			For<IFileService>()
+				//.HybridHttpOrThreadLocalScoped()
+				.Use<IFileService>("IFileService", ctx =>
+				{
+					var appSettings = ctx.GetInstance<ApplicationSettings>();
+					if (appSettings.UseAzureFileStorage) // remove this property
+					{
+						//return ctx.GetInstance<AzureFileService>();
+					}
 
-                    return ctx.GetInstance<LocalFileService>();
-                });
+					return ctx.GetInstance<LocalFileService>();
+				});
 		}
 	}
 }
