@@ -18,8 +18,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roadkill.Plugins", "src\Roa
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{618EB4AA-5583-4AC5-85FB-3A7E98065B6A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roadkill.CoreNetCore", "src\Roadkill.CoreNetCore\Roadkill.CoreNetCore.csproj", "{83071665-3AAA-4F94-B781-798CBD9BEDA8}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -105,24 +103,6 @@ Global
 		{EA201E5C-1FEF-4955-9CE8-F801D05E68CB}.Release|x64.Build.0 = Release|Any CPU
 		{EA201E5C-1FEF-4955-9CE8-F801D05E68CB}.Release|x86.ActiveCfg = Release|Any CPU
 		{EA201E5C-1FEF-4955-9CE8-F801D05E68CB}.Release|x86.Build.0 = Release|Any CPU
-		{83071665-3AAA-4F94-B781-798CBD9BEDA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{83071665-3AAA-4F94-B781-798CBD9BEDA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{83071665-3AAA-4F94-B781-798CBD9BEDA8}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{83071665-3AAA-4F94-B781-798CBD9BEDA8}.Debug|x64.Build.0 = Debug|Any CPU
-		{83071665-3AAA-4F94-B781-798CBD9BEDA8}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{83071665-3AAA-4F94-B781-798CBD9BEDA8}.Debug|x86.Build.0 = Debug|Any CPU
-		{83071665-3AAA-4F94-B781-798CBD9BEDA8}.Mono|Any CPU.ActiveCfg = Debug|Any CPU
-		{83071665-3AAA-4F94-B781-798CBD9BEDA8}.Mono|Any CPU.Build.0 = Debug|Any CPU
-		{83071665-3AAA-4F94-B781-798CBD9BEDA8}.Mono|x64.ActiveCfg = Debug|Any CPU
-		{83071665-3AAA-4F94-B781-798CBD9BEDA8}.Mono|x64.Build.0 = Debug|Any CPU
-		{83071665-3AAA-4F94-B781-798CBD9BEDA8}.Mono|x86.ActiveCfg = Debug|Any CPU
-		{83071665-3AAA-4F94-B781-798CBD9BEDA8}.Mono|x86.Build.0 = Debug|Any CPU
-		{83071665-3AAA-4F94-B781-798CBD9BEDA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{83071665-3AAA-4F94-B781-798CBD9BEDA8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{83071665-3AAA-4F94-B781-798CBD9BEDA8}.Release|x64.ActiveCfg = Release|Any CPU
-		{83071665-3AAA-4F94-B781-798CBD9BEDA8}.Release|x64.Build.0 = Release|Any CPU
-		{83071665-3AAA-4F94-B781-798CBD9BEDA8}.Release|x86.ActiveCfg = Release|Any CPU
-		{83071665-3AAA-4F94-B781-798CBD9BEDA8}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

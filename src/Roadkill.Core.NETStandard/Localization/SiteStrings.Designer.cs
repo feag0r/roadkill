@@ -40,7 +40,7 @@ namespace Roadkill.CoreNetCore.Localization {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Roadkill.CoreNetCore.Localization.SiteStrings", typeof(SiteStrings).GetTypeInfo().Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClassLibrary1.Localization.SiteStrings", typeof(SiteStrings).GetTypeInfo().Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
