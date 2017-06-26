@@ -1,6 +1,6 @@
 ﻿using Roadkill.Core.Attachments;
 
-namespace Roadkill.Tests.Unit.Attachments
+namespace Roadkill.Tests.NETStandard.Unit.StubsAndMocks
 {
 	public class ResponseWrapperMock : IResponseWrapper
 	{

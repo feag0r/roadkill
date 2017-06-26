@@ -1,9 +1,8 @@
-﻿using System;
-using Roadkill.Core;
+﻿using Roadkill.Core;
 using Roadkill.Core.Configuration;
 using Roadkill.Core.Database;
 
-namespace Roadkill.Tests.Unit.StubsAndMocks
+namespace Roadkill.Tests.NETStandard.Unit.StubsAndMocks.Database
 {
 	public class InstallerRepositoryMock : IInstallerRepository
 	{

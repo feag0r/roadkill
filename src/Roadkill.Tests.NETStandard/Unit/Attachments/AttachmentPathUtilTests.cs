@@ -1,20 +1,18 @@
-﻿using System;
-using System.IO;
-using NUnit.Framework;
+﻿using System.IO;
 using Roadkill.Core.Attachments;
 using Roadkill.Core.Configuration;
+using Roadkill.Tests.NETStandard.NUnitToXUnit;
+using Xunit;
 
 namespace Roadkill.Tests.Unit.Attachments
 {
-	[TestFixture]
 	[Category("Unit")]
 	public class AttachmentPathUtilTests
 	{
-		private ApplicationSettings _settings;
-		private AttachmentPathUtil _attachmentPathUtil;
+		private readonly ApplicationSettings _settings;
+		private readonly AttachmentPathUtil _attachmentPathUtil;
 
-		[SetUp]
-		public void Setup()
+		public AttachmentPathUtilTests()
 		{
 			_settings = new ApplicationSettings();
 			_settings.AttachmentsFolder = Path.Combine(Directory.GetCurrentDirectory(), "Attachments");
@@ -43,14 +41,14 @@ namespace Roadkill.Tests.Unit.Attachments
 			}
 			catch (IOException e)
 			{
-				Assert.Fail("Unable to delete the attachments folder " + _settings.AttachmentsFolder + ", does it have a lock?" + e.ToString());
+				NUnitAssert.Fail("Unable to delete the attachments folder " + _settings.AttachmentsFolder + ", does it have a lock?" + e.ToString());
 			}
 		}
 
-		[Test]
-		[TestCase("")]
-		[TestCase("/")]
-		[TestCase("///")]
+		[Theory]
+		[InlineData("")]
+		[InlineData("/")]
+		[InlineData("///")]
 		public void ConvertUrlPathToPhysicalPath_Should_Strip_Empty_And_Redundant_Seperators(string relativePath)
 		{
 			// Arrange
@@ -60,13 +58,13 @@ namespace Roadkill.Tests.Unit.Attachments
 			string actualPath = _attachmentPathUtil.ConvertUrlPathToPhysicalPath(relativePath);
 
 			// Assert
-			Assert.That(actualPath, Is.EqualTo(expectedPath));
+			NUnitAssert.That(actualPath, Is.EqualTo(expectedPath));
 		}
 
-		[Test]
-		[TestCase("/folder1", @"folder1\")]
-		[TestCase("/folder1/folder2", @"folder1\folder2\")]
-		[TestCase("/folder1/folder2/", @"folder1\folder2\")]
+		[Theory]
+		[InlineData("/folder1", @"folder1\")]
+		[InlineData("/folder1/folder2", @"folder1\folder2\")]
+		[InlineData("/folder1/folder2/", @"folder1\folder2\")]
 		public void ConvertUrlPathToPhysicalPath_Should_Combine_Paths_And_Contain_Trailing_Slash(string relativePath, string expectedPath)
 		{
 			// Arrange
@@ -77,10 +75,10 @@ namespace Roadkill.Tests.Unit.Attachments
 			string actualPath = _attachmentPathUtil.ConvertUrlPathToPhysicalPath(relativePath);
 
 			// Assert
-			Assert.That(actualPath, Is.EqualTo(expectedPath));
+			NUnitAssert.That(actualPath, Is.EqualTo(expectedPath));
 		}
 
-		[Test]
+		[Fact]
 		public void isattachmentpathvalid_should_be_true_for_valid_subdirectory()
 		{
 			// Arrange
@@ -92,10 +90,10 @@ namespace Roadkill.Tests.Unit.Attachments
 			bool actualResult = _attachmentPathUtil.IsAttachmentPathValid(physicalPath);
 
 			// Assert
-			Assert.That(actualResult, Is.EqualTo(expectedResult));
+			NUnitAssert.That(actualResult, Is.EqualTo(expectedResult));
 		}
 
-		[Test]
+		[Fact]
 		public void isattachmentpathvalid_should_be_false_for_valid_path_that_does_not_exist()
 		{
 			// Arrange
@@ -106,10 +104,10 @@ namespace Roadkill.Tests.Unit.Attachments
 			bool actualResult = _attachmentPathUtil.IsAttachmentPathValid(physicalPath);
 
 			// Assert
-			Assert.That(actualResult, Is.EqualTo(expectedResult));
+			NUnitAssert.That(actualResult, Is.EqualTo(expectedResult));
 		}
 
-		[Test]
+		[Fact]
 		public void isattachmentpathvalid_should_be_case_insensitive()
 		{
 			// Arrange
@@ -123,13 +121,13 @@ namespace Roadkill.Tests.Unit.Attachments
 			bool actualResult = _attachmentPathUtil.IsAttachmentPathValid(physicalPath);
 
 			// Assert
-			Assert.That(actualResult, Is.EqualTo(expectedResult));
+			NUnitAssert.That(actualResult, Is.EqualTo(expectedResult));
 		}
 
-		[Test]
-		[TestCase("{attachmentsfolder}", true)]
-		[TestCase(@"{attachmentsfolder}folder1", true)]
-		[TestCase(@"{attachmentsfolder}folder1\folder2", true)]
+		[Theory]
+		[InlineData("{attachmentsfolder}", true)]
+		[InlineData(@"{attachmentsfolder}folder1", true)]
+		[InlineData(@"{attachmentsfolder}folder1\folder2", true)]
 		public void IsAttachmentPathValid_Should_Be_True_For_Valid_Paths(string physicalPath, bool expectedResult)
 		{
 			// Arrange
@@ -140,10 +138,10 @@ namespace Roadkill.Tests.Unit.Attachments
 			bool actualResult = _attachmentPathUtil.IsAttachmentPathValid(physicalPath);
 
 			// Assert
-			Assert.That(actualResult, Is.EqualTo(expectedResult));
+			NUnitAssert.That(actualResult, Is.EqualTo(expectedResult));
 		}
 
-		[Test]
+		[Fact]
 		public void isattachmentpathvalid_should_be_true_for_emptystring()
 		{
 			// Arrange
@@ -153,24 +151,24 @@ namespace Roadkill.Tests.Unit.Attachments
 			bool actualResult = _attachmentPathUtil.IsAttachmentPathValid("");
 
 			// Assert
-			Assert.That(actualResult, Is.EqualTo(expectedResult));
+			NUnitAssert.That(actualResult, Is.EqualTo(expectedResult));
 		}
 
-		[Test]
-		[TestCase(@".\", false)]
-		[TestCase(@"\.", false)]
-		[TestCase(@"\..", false)]
-		[TestCase(@"..\", false)]
-		[TestCase(@"{attachmentsfolder}.\", false)]
-		[TestCase(@"{attachmentsfolder}\.", false)]
-		[TestCase(@"{attachmentsfolder}\..", false)]
-		[TestCase(@"{attachmentsfolder}..\", false)]
-		[TestCase(@"{attachmentsfolder}.\..\", false)]
-		[TestCase(@"{attachmentsfolder}..\.\", false)]
-		[TestCase(@"./../", false)]
-		[TestCase("/", false)]
-		[TestCase("/folder1", false)]
-		[TestCase("/folder1/folder2", false)]
+		[Theory]
+		[InlineData(@".\", false)]
+		[InlineData(@"\.", false)]
+		[InlineData(@"\..", false)]
+		[InlineData(@"..\", false)]
+		[InlineData(@"{attachmentsfolder}.\", false)]
+		[InlineData(@"{attachmentsfolder}\.", false)]
+		[InlineData(@"{attachmentsfolder}\..", false)]
+		[InlineData(@"{attachmentsfolder}..\", false)]
+		[InlineData(@"{attachmentsfolder}.\..\", false)]
+		[InlineData(@"{attachmentsfolder}..\.\", false)]
+		[InlineData(@"./../", false)]
+		[InlineData("/", false)]
+		[InlineData("/folder1", false)]
+		[InlineData("/folder1/folder2", false)]
 		public void IsAttachmentPathValid_Should_Be_False_For_Invalid_Paths(string physicalPath, bool expectedResult)
 		{
 			// Arrange
@@ -180,10 +178,10 @@ namespace Roadkill.Tests.Unit.Attachments
 			bool actualResult = _attachmentPathUtil.IsAttachmentPathValid(physicalPath);
 
 			// Assert
-			Assert.That(actualResult, Is.EqualTo(expectedResult));
+			NUnitAssert.That(actualResult, Is.EqualTo(expectedResult));
 		}
 
-		[Test]
+		[Fact]
 		public void attachmentfolderexistsandwriteable_should_return_empty_string_for_writeable_folder()
 		{
 			// Arrange
@@ -194,10 +192,10 @@ namespace Roadkill.Tests.Unit.Attachments
 			string actualMessage = AttachmentPathUtil.AttachmentFolderExistsAndWriteable(directory, null);
 
 			// Assert
-			Assert.That(actualMessage, Is.EqualTo(expectedMessage));
+			NUnitAssert.That(actualMessage, Is.EqualTo(expectedMessage));
 		}
 
-		[Test]
+		[Fact]
 		public void attachmentfolderexistsandwriteable_should_return_error_for_empty_folder()
 		{
 			// Arrange
@@ -208,10 +206,10 @@ namespace Roadkill.Tests.Unit.Attachments
 			string actualMessage = AttachmentPathUtil.AttachmentFolderExistsAndWriteable(directory, null);
 
 			// Assert
-			Assert.That(actualMessage, Is.EqualTo(expectedMessage));
+			NUnitAssert.That(actualMessage, Is.EqualTo(expectedMessage));
 		}
 
-		[Test]
+		[Fact]
 		public void attachmentfolderexistsandwriteable_should_return_error_for_missing_folder()
 		{
 			// Arrange
@@ -222,7 +220,7 @@ namespace Roadkill.Tests.Unit.Attachments
 			string actualMessage = AttachmentPathUtil.AttachmentFolderExistsAndWriteable(directory, null);
 
 			// Assert
-			Assert.That(actualMessage, Is.EqualTo(expectedMessage));
+			NUnitAssert.That(actualMessage, Is.EqualTo(expectedMessage));
 		}
 	}
 }

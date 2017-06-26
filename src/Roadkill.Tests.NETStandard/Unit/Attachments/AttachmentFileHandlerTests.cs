@@ -1,22 +1,16 @@
 ﻿using System;
 using System.IO;
-using Microsoft.Extensions.PlatformAbstractions;
 using Roadkill.Core.Attachments;
 using Roadkill.Core.Configuration;
 using Roadkill.Core.Services;
-using Roadkill.Tests.Unit.StubsAndMocks;
+using Roadkill.Tests.NETStandard.NUnitToXUnit;
+using Roadkill.Tests.NETStandard.Unit.StubsAndMocks;
+using Roadkill.Tests.NETStandard.Unit.StubsAndMocks.Database;
 using Xunit;
 
-namespace Roadkill.Tests.Unit.Attachments
+namespace Roadkill.Tests.NETStandard.Unit.Attachments
 {
-	public class Helpers
-	{
-		public static string GetCurrentDirectory()
-		{
-			return new ApplicationEnvironment().ApplicationBasePath;
-		}
-	}
-
+	[Category("Unit")]
 	public class AttachmentFileHandlerTests
 	{
 		private readonly ApplicationSettings _applicationSettings;
@@ -35,7 +29,7 @@ namespace Roadkill.Tests.Unit.Attachments
 		public void writeresponse_should_set_200_status_and_mimetype_and_write_bytes()
 		{
 			// Arrange
-			AttachmentFileHandler handler = new AttachmentFileHandler(_applicationSettings,_fileService);
+			AttachmentFileHandler handler = new AttachmentFileHandler(_applicationSettings, _fileService);
 
 			string fullPath = Path.Combine(Helpers.GetCurrentDirectory(), "Unit", "Attachments", "afile.jpg");
 			File.WriteAllText(fullPath, "fake content");
@@ -61,7 +55,7 @@ namespace Roadkill.Tests.Unit.Attachments
 		public void writeresponse_should_throw_404_exception_for_missing_file()
 		{
 			// Arrange
-			AttachmentFileHandler handler = new AttachmentFileHandler(_applicationSettings,_fileService);
+			AttachmentFileHandler handler = new AttachmentFileHandler(_applicationSettings, _fileService);
 
 			string localPath = "/wiki/Attachments/doesntexist404.jpg";
 			string applicationPath = "/wiki";
@@ -86,7 +80,7 @@ namespace Roadkill.Tests.Unit.Attachments
 		public void writeresponse_should_throw_404_exception_for_bad_application_path()
 		{
 			// Arrange
-			AttachmentFileHandler handler = new AttachmentFileHandler(_applicationSettings,_fileService);
+			AttachmentFileHandler handler = new AttachmentFileHandler(_applicationSettings, _fileService);
 
 			string fullPath = Path.Combine(Helpers.GetCurrentDirectory(), "Unit", "Attachments", "afile.jpg");
 			File.WriteAllText(fullPath, "fake content");
@@ -144,65 +138,6 @@ namespace Roadkill.Tests.Unit.Attachments
 
 			// Assert
 			NUnitAssert.That(actualPath, Is.EqualTo(expectedPath), "Failed with {0} {1} {2}", localPath, appPath, expectedPath);
-		}
-	}
-
-	public class NUnitAssert
-	{
-		public static void Fail(string message = "")
-		{
-			throw new Exception(message);
-		}
-
-		public static void That(object a, object b, string message = "", params object[] args)
-		{
-			Assert.Equal(a, b);
-		}
-
-		public static void That(object a, Is isItem, string message = "", params object[] args)
-		{
-			Assert.Equal(a, isItem.Item);
-		}
-	}
-
-	public class Is
-	{
-		public object Item { get; set; }
-
-		public override bool Equals(object obj)
-		{
-			return obj.Equals(Item);
-		}
-
-		public static Not Not
-		{
-			get
-			{
-				return new Not() { IsNot = true};
-			}
-		}
-
-		public static Is EqualTo(object item)
-		{
-			return new Is() { Item = item };
-		}
-	}
-
-	public class Not : Is
-	{
-		public bool IsNot { get; set; }
-
-		public override bool Equals(object obj)
-		{
-			if (IsNot)
-				return !obj.Equals(Item);
-
-			return obj.Equals(Item);
-		}
-
-		public Is EqualTo(object item)
-		{
-			return new Is() { Item = item };
 		}
 	}
 }

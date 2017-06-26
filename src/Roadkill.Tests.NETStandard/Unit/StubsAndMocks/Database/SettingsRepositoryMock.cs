@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Roadkill.Core;
 using Roadkill.Core.Configuration;
-using Roadkill.Core.Database;
 using Roadkill.Core.Database.Repositories;
 using Roadkill.Core.Plugins;
 using PluginSettings = Roadkill.Core.Plugins.Settings;
 
-namespace Roadkill.Tests.Unit.StubsAndMocks
+namespace Roadkill.Tests.NETStandard.Unit.StubsAndMocks.Database
 {
 	public class SettingsRepositoryMock : ISettingsRepository
 	{

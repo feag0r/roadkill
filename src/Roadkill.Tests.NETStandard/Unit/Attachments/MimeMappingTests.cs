@@ -1,13 +1,13 @@
-﻿using NUnit.Framework;
-using Roadkill.Core.Attachments;
+﻿using Roadkill.Core.Attachments;
+using Roadkill.Tests.NETStandard.NUnitToXUnit;
+using Xunit;
 
 namespace Roadkill.Tests.Unit.Attachments
 {
-	[TestFixture]
 	[Category("Unit")]
 	public class MimeMappingTests
 	{
-		[Test]
+		[Fact]
 		public void should_return_application_mimetype_for_empty_extension()
 		{
 			// Arrange
@@ -17,10 +17,10 @@ namespace Roadkill.Tests.Unit.Attachments
 			string actual = MimeTypes.GetMimeType("");
 
 			// Assert
-			Assert.That(actual, Is.EqualTo(expected));
+			NUnitAssert.That(actual, Is.EqualTo(expected));
 		}
 
-		[Test]
+		[Fact]
 		public void should_return_application_mimetype_for_unknown_extension()
 		{
 			// Arrange
@@ -30,10 +30,10 @@ namespace Roadkill.Tests.Unit.Attachments
 			string actual = MimeTypes.GetMimeType(".blah");
 
 			// Assert
-			Assert.That(actual, Is.EqualTo(expected));
+			NUnitAssert.That(actual, Is.EqualTo(expected));
 		}
 
-		[Test]
+		[Fact]
 		public void should_ignore_case_for_extension()
 		{
 			// Arrange
@@ -43,15 +43,15 @@ namespace Roadkill.Tests.Unit.Attachments
 			string actual = MimeTypes.GetMimeType(".JPEG");
 
 			// Assert
-			Assert.That(actual, Is.EqualTo(expected));
+			NUnitAssert.That(actual, Is.EqualTo(expected));
 		}
 
-		[Test]
-		[TestCase("image/jpeg",".jpg")]
-		[TestCase("image/png", ".png")]
-		[TestCase("image/gif", ".gif")]
-		[TestCase("application/x-shockwave-flash", ".swf")]
-		[TestCase("application/pdf", ".pdf")]
+		[Theory]
+		[InlineData("image/jpeg", ".jpg")]
+		[InlineData("image/png", ".png")]
+		[InlineData("image/gif", ".gif")]
+		[InlineData("application/x-shockwave-flash", ".swf")]
+		[InlineData("application/pdf", ".pdf")]
 		public void Should_Return_Known_Types_Common_Extension(string expectedMimeType, string extension)
 		{
 			// Arrange
@@ -60,7 +60,7 @@ namespace Roadkill.Tests.Unit.Attachments
 			string actual = MimeTypes.GetMimeType(extension);
 
 			// Assert
-			Assert.That(actual, Is.EqualTo(expectedMimeType));
+			NUnitNUnitAssert.That(actual, Is.EqualTo(expectedMimeType));
 		}
 	}
 }

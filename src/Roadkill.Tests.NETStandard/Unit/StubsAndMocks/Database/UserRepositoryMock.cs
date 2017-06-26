@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Roadkill.Core.Database;
-using PluginSettings = Roadkill.Core.Plugins.Settings;
 
-namespace Roadkill.Tests.Unit.StubsAndMocks
+namespace Roadkill.Tests.NETStandard.Unit.StubsAndMocks.Database
 {
 	public class UserRepositoryMock : IUserRepository
 	{

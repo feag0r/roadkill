@@ -2,7 +2,7 @@
 using Roadkill.Core.Database;
 using Roadkill.Core.Database.Repositories;
 
-namespace Roadkill.Tests.Unit.StubsAndMocks
+namespace Roadkill.Tests.NETStandard.Unit.StubsAndMocks.Database
 {
 	public class RepositoryFactoryMock : IRepositoryFactory
 	{
